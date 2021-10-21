@@ -776,7 +776,7 @@ var changes = false;
 function longpoll(last_seq) {
   // http://schinckel.net/2012/01/22/jquery-long-poll-for-couchdb-changes./
   var url = BaseUrl;
-  var url += '/wxd/_changes?feed=longpoll&include_docs=true';
+  url += '/wxd/_changes?feed=longpoll&include_docs=true';
   // If we don't have a sequence number, then see where we are up to.
   // console.log('Starting longpoll' + Date());
   if (last_seq) {
