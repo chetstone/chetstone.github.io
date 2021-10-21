@@ -288,7 +288,7 @@ function getDataPlot(period, date, group_level, feed, suppressPushState) {
   if (!feed) {
     changes = false;
     pollSignal(false);
-    if (date && !droop && history.pushState && !suppressPushState) {
+    if (date && !droop && history.pushState && false && !suppressPushState) {
       var obj = {
         date: date.toISOString(),
         period: period,
