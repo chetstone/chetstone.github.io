@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Dewachen Application</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1"
+    />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]> <script src="js/lib/html5.js"></script> <![endif]-->
+    <link rel="icon" type="image/x-icon" sizes="16x16 32x32" href="favicon.ico">
+    <link
+      rel="stylesheet"
+      href="https://d313gwn30ufuxy.cloudfront.net/css/bootstrap.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://d313gwn30ufuxy.cloudfront.net/css/local.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://d313gwn30ufuxy.cloudfront.net/css/bootstrap-responsive.css"
+    />
+    <style type="text/css">
+      label.valid {
+        width: 24px;
+        height: 24px;
+        background: url(img/valid.png) center center no-repeat;
+        display: inline-block;
+        text-indent: -9999px;
+      }
+      label.error {
+        font-weight: bold;
+        color: red;
+        padding: 2px 8px;
+        margin-top: 2px;
+      }
+    </style>
+
+    <script src="https://d313gwn30ufuxy.cloudfront.net/js/lib/head.min.js"></script>
+    <script>
+      head.js(
+        'https://d313gwn30ufuxy.cloudfront.net/js/lib/jquery.js',
+        'https://d313gwn30ufuxy.cloudfront.net/js/lib/jquery.validate.js',
+        'https://d313gwn30ufuxy.cloudfront.net/js/lib/additional-methods.js',
+        'https://d313gwn30ufuxy.cloudfront.net/js/lib/jquery.couch.js',
+        'https://d313gwn30ufuxy.cloudfront.net/js/lib/jquery.flot.js',
+        'https://d313gwn30ufuxy.cloudfront.net/js/lib/jquery.flot.crosshair.js',
+        'https://d313gwn30ufuxy.cloudfront.net/js/lib/jquery.flot.time.min.js',
+        'https://d313gwn30ufuxy.cloudfront.net/js/lib/jquery.flot.resize.js',
+        'https://d313gwn30ufuxy.cloudfront.net/js/lib/jquery.flot.state.js',
+        'https://d313gwn30ufuxy.cloudfront.net/js/lib/curveLines.js',
+        'https://d313gwn30ufuxy.cloudfront.net/js/lib/bootstrap-modal.js',
+        'https://d313gwn30ufuxy.cloudfront.net/js/lib/bootstrap-tooltip.js',
+        'https://d313gwn30ufuxy.cloudfront.net/js/lib/bootstrap-popover.js',
+        'https://d313gwn30ufuxy.cloudfront.net/js/lib/bootstrap-tab.js',
+        'https://d313gwn30ufuxy.cloudfront.net/js/lib/bootstrap-transition.js',
+        'https://d313gwn30ufuxy.cloudfront.net/js/lib/bootstrap-collapse.js',
+        'https://d313gwn30ufuxy.cloudfront.net/js/lib/bootstrap-carousel.js',
+        'js/util.js',
+        'js/app.js'
+      );
+    </script>
+  </head>
+
+  <body>
+    <div>
+      <div
+        id="settingsModal"
+        class="modal hide fade"
+        style="-webkit-overflow-scrolling: touch;"
+      >
+        <div class="modal-header">
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-hidden="true"
+          >
+            &times;
+          </button>
+          <h3>Period settings</h3>
+        </div>
+        <div class="modal-body">
+          <form id="settings-form" name="settings-form">
+            <div class="control-group">
+              End time:&nbsp;
+
+              <label class="radio">
+                <input
+                  type="radio"
+                  name="dateRadios"
+                  id="radioNow"
+                  value="Now"
+                />
+                Now
+              </label>
+              <label class="radio" style="float:left;margin-right:15px">
+                <input
+                  type="radio"
+                  name="dateRadios"
+                  id="radioDatefield"
+                  value="newDate"
+                  checked
+                />
+                Enter a date/time for period end&nbsp;
+              </label>
+              <input
+                id="dateField"
+                type="text"
+                name="datefield"
+                tabindex="1"
+                style="margin-bottom:0"
+                value=""
+              />
+            </div>
+            <!-- control-group -->
+
+            <span class="help-block"
+              >Period length (Enter hours or days or both):&nbsp;</span
+            >
+            <div class="form-inline">
+              <div class="control-group">
+                <label for="formHours">Hours</label>
+                <input
+                  id="formHours"
+                  name="formHours"
+                  type="number"
+                  class="period input-small"
+                  placeholder="Hours"
+                  tabindex="2"
+                />
+                <label for="formDays">Days </label>
+                <input
+                  id="formDays"
+                  name="formDays"
+                  type="number"
+                  class="period input-small"
+                  placeholder="Days"
+                  tabindex="3"
+                />
+              </div>
+              <!-- control-group -->
+
+              <div class="control-group visible-desktop">
+                Chart resolution:&nbsp;
+                <label class="radio">
+                  <input
+                    type="radio"
+                    name="resRadios"
+                    id="radioMinutes"
+                    value="6"
+                  />Minutes</label
+                >
+                <label class="radio">
+                  <input
+                    type="radio"
+                    name="resRadios"
+                    id="radio6Minutes"
+                    value="5"
+                  />5 Minutes</label
+                >
+                <label class="radio">
+                  <input
+                    type="radio"
+                    name="resRadios"
+                    id="radioHours"
+                    value="4"
+                  />Hours</label
+                >
+                <label class="radio">
+                  <input
+                    type="radio"
+                    name="resRadios"
+                    id="radioAuto"
+                    value="0"
+                    checked
+                  />Auto</label
+                >
+              </div>
+              <!-- control-group -->
+            </div>
+            <!-- form-inline -->
+            <div class="modal-footer">
+              <button type="reset" class="btn" data-dismiss="modal">
+                Close
+              </button>
+              <button type="submit" class="btn btn-primary" tabindex="4">
+                Reload chart
+              </button>
+            </div>
+            <!-- modal-footer -->
+          </form>
+        </div>
+        <!-- modal-body -->
+      </div>
+      <!-- settingsModal -->
+    </div>
+    <!-- Unclassed div -->
+    <div id="this-carousel-id" class="carousel slide visible-desktop">
+      <!-- class of slide for animation -->
+      <div class="carousel-inner">
+        <div class="item active">
+          <!-- class of active since it's the first item -->
+          <img
+            src="https://d313gwn30ufuxy.cloudfront.net/img/IMG_1645.jpg"
+            alt=""
+          />
+          <!-- <div class="carousel-caption"> -->
+          <!--   <p></p> -->
+          <!-- </div> -->
+        </div>
+        <div class="item">
+          <img
+            src="https://d313gwn30ufuxy.cloudfront.net/img/IMG_1646.jpg"
+            alt=""
+          />
+          <!-- <div class="carousel-caption"> -->
+          <!--   <p></p> -->
+          <!-- </div> -->
+        </div>
+      </div>
+      <!-- /.carousel-inner -->
+      <!--  Next and Previous controls below
+             href values must reference the id for this carousel -->
+      <a
+        class="carousel-control left"
+        href="#this-carousel-id"
+        data-slide="prev"
+        >&lsaquo;</a
+      >
+      <a
+        class="carousel-control right"
+        href="#this-carousel-id"
+        data-slide="next"
+        >&rsaquo;</a
+      >
+    </div>
+    <!-- /.carousel -->
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <!-- <div class="container"> -->
+        <a
+          class="btn btn-navbar"
+          data-toggle="collapse"
+          data-target=".nav-collapse"
+        >
+          <span class="icon-bar"></span> <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a>
+        <a class="brand" href="#">Acme</a>
+        <div class="nav-collapse collapse">
+          <div class="tabbable">
+            <ul class="nav nav-pills" id="myTab">
+              <li class="active">
+                <a href="#" id="solar" data-toggle="pill">Solar</a>
+              </li>
+              <li><a href="#" id="temps" data-toggle="pill">Weather</a></li>
+              <li><a href="#" id="all" data-toggle="pill">All</a></li>
+              <li>
+                <a href="#" id="predict" data-toggle="pill">Predictions</a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  data-target="#settingsModal"
+                  id="settings"
+                  data-toggle="modal"
+                  >Period</a
+                >
+              </li>
+            </ul>
+            <!-- </div> div class container -->
+          </div>
+          <!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Main hero unit for a primary marketing message or call to action -->
+    <div class="container-fluid" style="height: 100%;">
+      <div id="placeholder" style="height: auto;"></div>
+    </div>
+    <!-- /container -->
+    <footer style="height: 1.5em;text-align: center;">
+      <p id="hoverdata">Loading...</p>
+    </footer>
+  </body>
+</html>

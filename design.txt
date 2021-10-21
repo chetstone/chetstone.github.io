@@ -1,0 +1,87 @@
+3 resolution levels:
+NAME    GroupLevel      Speed   Quality
+max     6               < 10hr   < 48hr
+mod     5               < 48hr   < 10 days
+min     4               > 48hr   > 10 days
+
+
+Colors of solar:                                 Flot color #
+Series 0 rgb(203,75,75)     Collector dk rd      2
+Series 1 rgb(175,216,248)   Tank bottom lt blu   1
+Series 2 rgb(77,167,77)     Tank top    dk grn   3
+Series 3 rgb(148,64,237)    Hydronics   purple   4
+Series 4 rgb(189,155,51)    Pump 1      dk gold  5
+Series 5 rgb(237,194,64)    Pump 2      lt gold  0
+
+Problem with conflicts, after bulk-updating localhost iriscouch and replication, charting failed because of the presence of a _conflicts field.
+The DL2 values differed slightly because the bulk update used the local archive which was updated every minute (on the minute), and the realtime (normal) db entries query the dl2 every two minutes (roughly) and round the time to the nearest minute. The .Out values 
+
+[ruby-1.9.2-p180: boilerplate 566] curl 'http://localhost:5984/wxd/_design/app/_view/conflicts'
+{"total_rows":5,"offset":0,"rows":[
+{"id":"2012-11-29T19:08:00Z.Out","key":["1-294dc7452aa272c3f54f1e240b60bd5e"],"value":null},
+{"id":"2012-11-29T19:08:00Z.DL2","key":["1-5008004c7c81c9b3f9d20846d80c1437"],"value":null},
+{"id":"2012-11-29T19:03:00Z.DL2","key":["1-6fa57aced72315bef3dde75ae2c0d80c"],"value":null},
+{"id":"2012-11-29T19:06:00Z.Out","key":["1-8ce1acdb657deb31fec7bd67b5a604ca"],"value":null},
+{"id":"2012-11-29T19:10:00Z.DL2","key":["1-9b91cd30406c7d974d96220717e7b0db"],"value":null}
+
+
+I deleted the local database (accidentally because of a careless curl command), 
+recreated a new db with the same name and replicated from Iris. This time the
+3 DL2 docs, although now identical, were still marked as conflicting. Eventually
+I got rid of the conflicts by deleting the 3 documents on the local db, then
+replicating (paradoxically) from local to iriscouch, which strangely copied the
+docs back to local and removed the conflict records. 
+
+In another experiment, I intentionally sent 2 of the same documents to the db, 
+and got the response: 
+
+[ruby-1.9.2-p180: SolarSystem 336] ./wx_get.rb
+[{"ok":true,"id":"2012-11-30T19:20:00Z.Out","rev":"1-75fe48f38991c8c11d2cb6ea7b7ac3ab"},{"ok":true,"id":"2012-11-30T19:19:00Z.In","rev":"1-f6f33e6540b1c43dd6d81dc66a769eb7"}]
+[ruby-1.9.2-p180: SolarSystem 337] ./wx_get.rb
+[{"id":"2012-11-30T19:20:00Z.Out","error":"conflict","reason":"Document update conflict."},{"id":"2012-11-30T19:19:00Z.In","error":"conflict","reason":"Document update conflict."}]
+
+but strangely they were not marked as conflicting in the db. Now I'll try sending duplicates to both dbs then replicating both ways. Still found no conflicting documents found using these commands:
+curl 'http://localhost:5984/wxd/_design/app/_view/conflicts?include_docs=true'
+curl 'http://chetstone.iriscouch.com/wxd/_design/app/_view/conflicts?_include_docs=true'
+
+Note that because of the idiosyncrasies of the input scripts the number values of the DL2 documents have quotes around them, while those of the WX docs are plain numbers. At least both the bulk and realtime scripts agree on that. 
+Fri Nov 30 14:34:01 2012
+
+Sat Dec  1 14:13:01 2012
+HOw to split docs. dl2 file has 1126640 lines, mostly 1m deltas. So using
+10m interval we have 117000 documents, each of which is 143 bytes (76).
+So dividing it into 4 we have 4MB json for each upload.
+beginning time is 1284171780
+end is 1353870239
+See legacy_split.xls
+
+The four commands then are:
+
+Xselect_lines.rb 1284171780 1301596395 Archive/all.txt |wx_bulk.rb
+Xselect_lines.rb 1301596396 1319021011 Archive/all.txt |wx_bulk.rb
+Xselect_lines.rb 1319021012 1336445627 Archive/all.txt |wx_bulk.rb
+Xselect_lines.rb 1336445628 1353864238 Archive/all.txt |wx_bulk.rb
+Xselect_lines.rb 1353864239 1353870239 Archive/all.txt | wx_bulk.rb
+
+
+For temps,
+beginning is 1270673185
+end is 1353870239
+
+For Outdoor:
+
+Xselect_lines.rb 1270673185 1291472449 Archive/wxdirect.dat |wx_bulk.rb -wx
+Xselect_lines.rb 1291472450 1312271714 Archive/wxdirect.dat |wx_bulk.rb -wx
+Xselect_lines.rb 1312271715 1333070979 Archive/wxdirect.dat |wx_bulk.rb -wx
+Xselect_lines.rb 1333070980 1353870239 Archive/wxdirect.dat |wx_bulk.rb -wx
+
+
+For Indoor: (change filter in script)
+
+Xselect_lines.rb 1270673185 1291472449 Archive/wxdirect.dat |wx_bulk.rb -wx
+Xselect_lines.rb 1291472450 1312271714 Archive/wxdirect.dat |wx_bulk.rb -wx
+Xselect_lines.rb 1312271715 1333070979 Archive/wxdirect.dat |wx_bulk.rb -wx
+Xselect_lines.rb 1333070980 1353870239 Archive/wxdirect.dat |wx_bulk.rb -wx
+
+# deployment
+http://code.google.com/p/reupholster/wiki/ReleaseOhFourOne

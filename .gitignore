@@ -1,0 +1,6 @@
+.idea
+.log/
+.DS_Store/
+.tramp_history
+reports*
+node_modules
