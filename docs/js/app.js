@@ -1,3 +1,5 @@
+var BaseUrl =
+  'https://b482ecaa-1ac2-4933-bec9-ecade207eea0-bluemix.cloudant.com';
 var analytics = true;
 var plot;
 var droop = null; // URL param "1" to enable special test code. If "2" will search for last droop.
@@ -295,10 +297,7 @@ function getDataPlot(period, date, group_level, feed, suppressPushState) {
       };
       //      console.log(obj);
       var url =
-        window.location.protocol +
-        '//' +
-        window.location.host +
-        window.location.pathname +
+        BaseUrl +
         '?end=' +
         obj.date +
         '&period=' +
@@ -320,12 +319,14 @@ function getDataPlot(period, date, group_level, feed, suppressPushState) {
     //Auto: use hours resolution if > 10 days
     group_level = period > 10 * 24 * 60 * 60 ? 4 : 5;
   }
-  var url = '_view/byDate?group_level=' + group_level.toFixed(0);
+  var url = BaseUrl;
+  url += '/wxd/_design/app/';
+  url += '_view/byDate?group_level=' + group_level.toFixed(0);
   url += '&startkey=' + makeKey(start_date);
   if (date) {
     url += '&endkey=' + makeKey(end);
   }
-  //    console.log(url);
+  console.log(url);
   // clear data before reloading
   data_query = $.getJSON(url);
   // Now get the pump valve data
@@ -333,6 +334,8 @@ function getDataPlot(period, date, group_level, feed, suppressPushState) {
   if (analytics) {
     var sdate = new Date(start_date - 24 * 60 * 60 * 1000);
     //console.log([sdate,start_date]);
+    var url = BaseUrl;
+    url += '/wxd/_design/app/';
     url = '_view/Notes';
     url += '?startkey=' + makeKey(sdate);
     if (date) {
@@ -772,7 +775,8 @@ var changes = false;
 
 function longpoll(last_seq) {
   // http://schinckel.net/2012/01/22/jquery-long-poll-for-couchdb-changes./
-  var url = '/wxd/_changes?feed=longpoll&include_docs=true';
+  var url = BaseUrl;
+  var url += '/wxd/_changes?feed=longpoll&include_docs=true';
   // If we don't have a sequence number, then see where we are up to.
   // console.log('Starting longpoll' + Date());
   if (last_seq) {
