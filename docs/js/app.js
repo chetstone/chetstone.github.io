@@ -1,6 +1,6 @@
 var BaseUrl =
   'https://b482ecaa-1ac2-4933-bec9-ecade207eea0-bluemix.cloudant.com';
-var analytics = true;
+var analytics = false;
 var plot;
 var droop = null; // URL param "1" to enable special test code. If "2" will search for last droop.
 var droopImage = 'http://i.imgur.com/ZcNoh9m.png';
