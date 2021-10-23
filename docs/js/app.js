@@ -1,5 +1,5 @@
 var BaseUrl =
-    'https://10.147.17.212:5984';
+    'https://couch.dewachen.org';
 var analytics = false;
 var plot;
 var droop = null; // URL param "1" to enable special test code. If "2" will search for last droop.
