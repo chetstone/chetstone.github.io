@@ -18,7 +18,7 @@ server {
   listen 443 ssl;
   server_name couch.dewachen.org;
 
-  root /usr/share/nginx/site/docs;
+#  root /usr/share/nginx/site/docs;
 
   ssl on;
     ssl_certificate /etc/letsencrypt/live/couch.dewachen.org/fullchain.pem; # managed by Certbot
@@ -30,8 +30,26 @@ server {
   ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
   ssl_session_cache shared:SSL:1m;
 
+#  location / {
+#  index index.html;
+#  }
+
+   location = / {
+     return 302 /wxd/_design/app/index.html;
+   }
+
   location / {
-  index index.html;
+    proxy_pass http://10.147.17.212:5984;
+    # Not sure why this is necessary, anybody should be able to access the db while reading
+    # proxy_set_header Authorization "YWRtaW46d2FyaG9yc2UtZ2xhc3MtZmFsc2UtbW9sZWhpbGw=";
+    expires off;
+    proxy_redirect off;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_buffering  off;
+    proxy_read_timeout 1200;
+    proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+    proxy_set_header        X-Real-IP       $remote_addr;
   }
 
   location ~ /.well-known {
