@@ -1,0 +1,41 @@
+# https://gist.github.com/robbiet480/b1e9a2a22501b8304547
+# Installed at /etc/nginx/sites-available/couch.dewachen.org
+
+# after changing do:
+# on this machine:
+# scp ./nginx.conf droot:/etc/nginx/sites-available/couch.dewachen.org
+# on docean:
+# sudo nginx -t
+# sudo systemctl restart nginx
+
+server {
+  listen 80;
+  server_name couch.dewachen.org;
+  return 301 https://$host$request_uri;
+}
+
+server {
+  listen 443 ssl;
+  server_name couch.dewachen.org;
+
+  root /usr/share/nginx/site/docs;
+
+  ssl on;
+    ssl_certificate /etc/letsencrypt/live/couch.dewachen.org/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/couch.dewachen.org/privkey.pem; # managed by Certbot
+  ssl_session_timeout         5m;
+
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_prefer_server_ciphers on;
+  ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
+  ssl_session_cache shared:SSL:1m;
+
+  location / {
+  index index.html;
+  }
+
+  location ~ /.well-known {
+    allow all;
+  }
+
+}
