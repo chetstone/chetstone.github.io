@@ -163,11 +163,13 @@ function setPlaceholderHeight() {
   placeholderParent.siblings().each(function () {
     height -= $(this).outerHeight();
   });
+  placeholder.siblings().each(function () {
+    height -= $(this).outerHeight();
+  });
   height -= parseInt(placeholderParent.css('padding-top'), 10);
   height -= parseInt(placeholderParent.css('padding-bottom'), 10);
-  //    console.log(height);
-
   height += window.innerHeight;
+  console.log(height);
   placeholder.css('height', height <= 0 ? 100 : height + 'px');
 }
 var updateLegendTimeout = null;
