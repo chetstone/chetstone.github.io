@@ -1,5 +1,11 @@
-var BaseUrl =
-    'https://couch.dewachen.org';
+var ibmUrl =
+  'https://b482ecaa-1ac2-4933-bec9-ecade207eea0-bluemix.cloudant.com';
+var BaseUrl = 'https://couch.dewachen.org';
+var isAcme = document.location.hostname.startsWith('acme');
+if (isAcme) {
+  document.getElementById('appFavicon').setAttribute('href', 'favicon_sun.ico');
+  BaseUrl = ibmUrl;
+}
 var analytics = false;
 var plot;
 var droop = null; // URL param "1" to enable special test code. If "2" will search for last droop.
@@ -905,8 +911,9 @@ $(document).ready(function () {
     //$('.carousel').carousel('next');
     // Refresh image
     var timestamp = new Date().getTime();
-    var mountain = document.getElementById("mountain");
-    mountain.src = 'https://couch.dewachen.org/img/videos/wisenet.jpg?t=' + timestamp;
+    var mountain = document.getElementById('mountain');
+    mountain.src =
+      'https://couch.dewachen.org/img/videos/wisenet.jpg?t=' + timestamp;
     data.forEach(function (obj) {
       if (obj.id[0] === '_') {
         //        console.log('Design Doc, skipping');
