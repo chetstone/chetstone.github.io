@@ -902,7 +902,11 @@ $(document).ready(function () {
   $(document).bind('longpoll-data-wxd', function (evt, data) {
     // do something with data here.
     // This one will be only for the database named <database>.
-    $('.carousel').carousel('next');
+    //$('.carousel').carousel('next');
+    // Refresh image
+    var timestamp = new Date().getTime();
+    var mountain = document.getElementById("mountain");
+    mountain.src = 'https://couch.dewachen.org/img/videos/wisenet.jpg?t=' + timestamp;
     data.forEach(function (obj) {
       if (obj.id[0] === '_') {
         //        console.log('Design Doc, skipping');
@@ -948,7 +952,7 @@ $(document).ready(function () {
   // wait till doc ready to display instructions
   $('#hoverdata').text(initstr);
 
-  $('#this-carousel-id, footer').click(function () {
+  $('#mountain, footer').click(function () {
     // only makes sense if time is 'now'
     // no sense reload exactly the same data...
     /*     console.log('Carousel clicked');*/
