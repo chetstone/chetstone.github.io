@@ -1,5 +1,11 @@
-var BaseUrl =
+var ibmUrl =
   'https://b482ecaa-1ac2-4933-bec9-ecade207eea0-bluemix.cloudant.com';
+var BaseUrl = 'https://couch.dewachen.org';
+var isAcme = document.location.hostname.startsWith('acme');
+if (isAcme) {
+  document.getElementById('appFavicon').setAttribute('href', 'favicon_sun.ico');
+  BaseUrl = ibmUrl;
+}
 var analytics = false;
 var plot;
 var droop = null; // URL param "1" to enable special test code. If "2" will search for last droop.
@@ -163,11 +169,13 @@ function setPlaceholderHeight() {
   placeholderParent.siblings().each(function () {
     height -= $(this).outerHeight();
   });
+  placeholder.siblings().each(function () {
+    height -= $(this).outerHeight();
+  });
   height -= parseInt(placeholderParent.css('padding-top'), 10);
   height -= parseInt(placeholderParent.css('padding-bottom'), 10);
-  //    console.log(height);
-
   height += window.innerHeight;
+  // console.log(height);
   placeholder.css('height', height <= 0 ? 100 : height + 'px');
 }
 var updateLegendTimeout = null;
@@ -900,7 +908,12 @@ $(document).ready(function () {
   $(document).bind('longpoll-data-wxd', function (evt, data) {
     // do something with data here.
     // This one will be only for the database named <database>.
-    $('.carousel').carousel('next');
+    //$('.carousel').carousel('next');
+    // Refresh image
+    var timestamp = new Date().getTime();
+    var mountain = document.getElementById('mountain');
+    mountain.src =
+      'https://couch.dewachen.org/img/videos/wisenet.jpg?t=' + timestamp;
     data.forEach(function (obj) {
       if (obj.id[0] === '_') {
         //        console.log('Design Doc, skipping');
@@ -946,7 +959,7 @@ $(document).ready(function () {
   // wait till doc ready to display instructions
   $('#hoverdata').text(initstr);
 
-  $('#this-carousel-id, footer').click(function () {
+  $('#mountain, footer').click(function () {
     // only makes sense if time is 'now'
     // no sense reload exactly the same data...
     /*     console.log('Carousel clicked');*/
