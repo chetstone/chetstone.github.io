@@ -25,19 +25,30 @@
       href="https://d313gwn30ufuxy.cloudfront.net/css/bootstrap-responsive.css"
     />
     <style type="text/css">
-      label.valid {
-        width: 24px;
-        height: 24px;
-        background: url(img/valid.png) center center no-repeat;
-        display: inline-block;
-        text-indent: -9999px;
-      }
-      label.error {
-        font-weight: bold;
-        color: red;
-        padding: 2px 8px;
-        margin-top: 2px;
-      }
+     label.valid {
+       width: 24px;
+       height: 24px;
+       background: url(img/valid.png) center center no-repeat;
+       display: inline-block;
+       text-indent: -9999px;
+     }
+     label.error {
+       font-weight: bold;
+       color: red;
+       padding: 2px 8px;
+       margin-top: 2px;
+     }
+     #mountain{
+       display: block;
+     }
+
+     @media (max-height: 400px)
+     {
+       #mountain
+       {
+         display: none;
+       }
+     }
     </style>
 
     <script src="https://d313gwn30ufuxy.cloudfront.net/js/lib/head.min.js"></script>
@@ -245,7 +256,7 @@
 
     <div class="container-fluid" style="max-height: 100vh;">
       <div class="row" style="margin-left: 0">
-        <img style="object-fit: cover; object-position: center 10%; height: 200px; width: 100vw; margin-top: 0px" src="/img/videos/wisenet.jpg" alt="uptodate image of Crestone Mountain" >
+        <img id="mountain" style="object-fit: cover; object-position: center 10%; height: 20vh; width: 100vw; margin-top: 0px" src="/img/videos/wisenet.jpg" alt="uptodate image of Crestone Mountain" >
       </div>
       <div class="row" id="placeholder" style="height: auto;"></div>
     </div>

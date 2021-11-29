@@ -169,7 +169,7 @@ function setPlaceholderHeight() {
   height -= parseInt(placeholderParent.css('padding-top'), 10);
   height -= parseInt(placeholderParent.css('padding-bottom'), 10);
   height += window.innerHeight;
-  console.log(height);
+  // console.log(height);
   placeholder.css('height', height <= 0 ? 100 : height + 'px');
 }
 var updateLegendTimeout = null;
