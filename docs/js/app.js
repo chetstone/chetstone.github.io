@@ -6,6 +6,7 @@ if (isAcme) {
   document.getElementById('appFavicon').setAttribute('href', 'favicon_sun.ico');
   BaseUrl = ibmUrl;
 }
+var lastImageUpdate = new Date().getTime();
 var analytics = false;
 var plot;
 var droop = null; // URL param "1" to enable special test code. If "2" will search for last droop.
@@ -912,8 +913,11 @@ $(document).ready(function () {
     // Refresh image
     var timestamp = new Date().getTime();
     var mountain = document.getElementById('mountain');
-    mountain.src =
-      'https://couch.dewachen.org/img/videos/wisenet.jpg?t=' + timestamp;
+    if (timestamp > lastImageUpdate + 10000) {
+      lastImageUpdate = timestamp;
+      mountain.src =
+        'https://couch.dewachen.org/img/videos/wisenet.jpg?t=' + timestamp;
+    }
     data.forEach(function (obj) {
       if (obj.id[0] === '_') {
         //        console.log('Design Doc, skipping');
