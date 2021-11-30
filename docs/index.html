@@ -50,7 +50,6 @@
        }
      }
      .webcam {
-       object-fit: cover;
        height: 30vh;
        width: 100vw;
        margin-top: 2px
@@ -58,10 +57,12 @@
      @supports (object-position: center 5%) {
        .placement {
          object-position: center 5%;
+         object-fit: cover;
        }
      }
      @supports not (object-position: center 5%) {
        .placement {
+         object-fit: contain;
        }
      }
     </style>
