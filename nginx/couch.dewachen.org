@@ -11,7 +11,12 @@
 server {
   listen 80;
   server_name couch.dewachen.org;
+  location ~ /.well-known/acme-challenge/ {
+     root /var/www/letsencrypt/;
+  }
+
   return 301 https://$host$request_uri;
+
 }
 
 server {
@@ -49,8 +54,8 @@ server {
     proxy_set_header        X-Real-IP       $remote_addr;
   }
 
-  location ~ /.well-known {
-    allow all;
+  location ~ /.well-known/acme-challenge/ {
+       root /var/www/letsencrypt/;
   }
 
 }
