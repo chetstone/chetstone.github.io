@@ -1,10 +1,6 @@
 Updating
 
-On Gesar.
+This github repo (chetstone.github.io) is the working code for acme.dewachen.org.
 
-To use different favicons on the two servers:
-
-cp Favicons\ Sunglasses/favicon.ico html
-./pushapp.sh -d
-cp Favicons_sun/favicon.ico html
-./pushapp.sh -c
+The digital ocean clone is at /usr/share/nginx/site and is the working code
+for couch.dewachen.org
