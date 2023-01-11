@@ -369,6 +369,8 @@ function getDataPlot(period, date, group_level, feed, suppressPushState) {
       //console.log(JSON.stringify(notes[0]));
       d = [];
       // Raw Fields
+      d['GarageTemp'] = [];
+      d['StorageTemp'] = [];
       d['OutTemp'] = [];
       d['InTemp'] = [];
       d['BackTemp'] = [];
@@ -622,6 +624,18 @@ function getDataPlot(period, date, group_level, feed, suppressPushState) {
         {
           data: d['InTemp'],
           label: 'Room (TX-60) = 000.0',
+          lines: { show: true },
+          curvedLines: { active: true, apply: true },
+        },
+        {
+          data: d['GarageTemp'],
+          label: 'Garage = 000.0',
+          lines: { show: true },
+          curvedLines: { active: true, apply: true },
+        },
+        {
+          data: d['StorageTemp'],
+          label: 'Storage = 000.0',
           lines: { show: true },
           curvedLines: { active: true, apply: true },
         },
