@@ -19,3 +19,6 @@ e.g.
 the Temp attribute of 2023-01-11T01:58:00Z.Garage
 
 is called GarageTemp here (js/app.js)
+
+NOTE: the byDate MapReduce function suppresses Humidity-- only returns Probe and Temp values.
+So why are we storing humidity in the db???

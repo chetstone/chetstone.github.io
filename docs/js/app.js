@@ -340,23 +340,9 @@ function getDataPlot(period, date, group_level, feed, suppressPushState) {
   data_query = $.getJSON(url);
   // Now get the pump valve data
 
-  if (analytics) {
-    var sdate = new Date(start_date - 24 * 60 * 60 * 1000);
-    //console.log([sdate,start_date]);
-    var url = BaseUrl;
-    url += '/wxd/_design/app/';
-    url = '_view/Notes';
-    url += '?startkey=' + makeKey(sdate);
-    if (date) {
-      url += '&endkey=' + makeKey(end);
-    }
-    notes_query = $.getJSON(url);
-  } else {
-    notes_query = new $.Deferred();
-    notes_query.resolve([{ rows: [] }]);
-  }
-  /* notes_query = new $.Deferred();
-   * notes_query.resolve([{"rows": []}]);*/
+
+  notes_query = new $.Deferred();
+  notes_query.resolve([{ rows: [] }]);
 
   var legends;
   $.when(data_query, notes_query).done(
@@ -408,62 +394,6 @@ function getDataPlot(period, date, group_level, feed, suppressPushState) {
       d['twcdaily'] = [];
       d['openwxmap'] = [];
 
-      if (analytics) {
-        var last_date = 0;
-        var minutes = 0;
-        var offset = 30; // minutes distance so data points are not on top of each other
-        notes[0]['rows'].forEach(function (note) {
-          // let's assume they're in order
-          var knote = note['key'];
-          var dat = new Date(
-            Date.UTC(knote[0], knote[1], knote[2], knote[3], knote[5])
-          );
-          if (dat.getUTCDate() !== last_date) {
-            minutes = 0;
-            last_date = dat.getUTCDate();
-          }
-          // Choose Note saved either by new prediction code or by dl2predict "2"
-          // which has fields sun and is missing either SMX or AHO (and AHF)
-          if (
-            typeof note['value']['predictions'] === 'undefined' &&
-            (typeof note['value']['sun'] === 'undefined' ||
-              (typeof note['value']['SMX'] !== 'undefined' &&
-                typeof note['value']['AHO'] !== 'undefined'))
-          ) {
-            return;
-          }
-
-          if (typeof note['value']['nws'] !== 'undefined') {
-            d['Notes'].push([
-              dayNoon(dat, (minutes += offset)),
-              note['value']['nws'],
-            ]);
-
-            /* if (/_id|_rev/.test(v)) {
-             * } else {
-             *   o[v] = note['value'][v];
-             * }*/
-          } else if (typeof note['value']['sun'] !== 'undefined') {
-            d['Notes'].push([
-              dayNoon(dat, (minutes += offset)),
-              note['value']['sun'],
-            ]);
-          } else {
-            predictFields.forEach(function (x) {
-              if (typeof note['value'][x] !== 'undefined') {
-                d[x].push([
-                  dayNoon(dat, (minutes += offset)),
-                  note['value'][x],
-                ]);
-                //                console.log(`Pushing ${x}, minutes = ${minutes}`);
-              }
-            });
-          }
-          // d['Notes'].push([dat, o]);
-        });
-
-        //console.log(d['Notes']);
-      }
       // Hmmm. Why does jstuff have its data buried in an array when
       // $.when() has 2 args but not when it has one arg?
       // and notes doesn't. WTF?
