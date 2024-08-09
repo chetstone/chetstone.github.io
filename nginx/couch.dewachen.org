@@ -1,9 +1,9 @@
 # https://gist.github.com/robbiet480/b1e9a2a22501b8304547
-# Installed at /etc/nginx/sites-available/couch.dewachen.org
+# Installed at /usr/share/nginx/site/nginx/couch.dewachen.org
+# symlinked to /etc/nginx/sites-available/couch.dewachen.org
 
-# after changing do:
-# on this machine:
-# scp ./nginx.conf droot:/etc/nginx/sites-available/couch.dewachen.org
+# after changing a local machine (not recommended) do:
+# scp ./couch.dewachen.org droot:/usr/share/nginx/site/nginx/couch.dewachen.org
 # on docean:
 # sudo nginx -t
 # sudo systemctl restart nginx
@@ -41,7 +41,7 @@ server {
    }
 
   location /wxd {
-    proxy_pass http://10.147.17.212:5984;
+    proxy_pass http://gesar.dewachen.org:5984;
     # Not sure why this is necessary, anybody should be able to access the db while reading
     # proxy_set_header Authorization "YWRtaW46d2FyaG9yc2UtZ2xhc3MtZmFsc2UtbW9sZWhpbGw=";
     expires off;

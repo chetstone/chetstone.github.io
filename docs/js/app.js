@@ -6,7 +6,7 @@ if (isAcme) {
   document.getElementById('appFavicon').setAttribute('href', 'favicon_sun.ico');
   BaseUrl = ibmUrl;
 }
-var lastImageUpdate = new Date().getTime();
+var lastImageUpdate = 0;
 var analytics = false;
 var plot;
 var droop = null; // URL param "1" to enable special test code. If "2" will search for last droop.
@@ -768,6 +768,7 @@ function pollSignal(flag) {
 }
 
 $(document).ready(function () {
+  updateImage();
   droop = $.urlParam('droop');
   if (droop) {
     $('.carousel').carousel({
@@ -861,13 +862,7 @@ $(document).ready(function () {
     // This one will be only for the database named <database>.
     //$('.carousel').carousel('next');
     // Refresh image
-    var timestamp = new Date().getTime();
-    var mountain = document.getElementById('mountain');
-    if (timestamp > lastImageUpdate + 10000) {
-      lastImageUpdate = timestamp;
-      mountain.src =
-        'https://couch.dewachen.org/img/videos/wisenet.jpg?t=' + timestamp;
-    }
+    updateImage();
     data.forEach(function (obj) {
       if (obj.id[0] === '_') {
         //        console.log('Design Doc, skipping');
