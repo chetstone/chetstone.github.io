@@ -10,16 +10,30 @@ $.urlParam = function (name) {
 };
 
 function updateParam(key, value) {
+  var url = new URL(window.location);
   if ('URLSearchParams' in window) {
-    const url = new URL(window.location);
     url.searchParams.set(key, value);
-    history.pushState(null, '', url);
-    //  var searchParams = new URLSearchParams(window.location.search);
-    // searchParams.set(key, value);
-    // window.location.search = searchParams.toString();
   } else {
     console.log('URLSearchParams not supported');
   }
+  return url;
+}
+
+function switchTab(view) {
+  var idString = '#myTab a[data-target="' + view + '"]';
+  console.log('showing tab ' + idString);
+  changeTabFromJS = true;
+  $(idString).click();
+}
+function newState(url) {
+  var state = {
+    globalDate: globalDate,
+    period: period,
+    groupLevel: groupLevel,
+    clickback: clickback,
+    format: format,
+  };
+  history.pushState(state, '', url);
 }
 function prevDate(thisDate, incr) {
   if (!thisDate) {

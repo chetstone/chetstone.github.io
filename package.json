@@ -1,5 +1,6 @@
 {
   "prettier": {
+    "trailingComma": "es5",
     "singleQuote": true
   },
   "dependencies": {
@@ -7,6 +8,6 @@
     "nano": "^7.1.1"
   },
   "devDependencies": {
-    "prettier": "2.0.5"
+    "prettier": "2.2.1"
   }
 }

@@ -67,7 +67,7 @@
      }
     </style>
 
-    <script src="https://d313gwn30ufuxy.cloudfront.net/js/lib/head.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/headjs/0.99/head.min.js"></script>
     <script>
       head.js(
         'https://d313gwn30ufuxy.cloudfront.net/js/lib/jquery.js',
@@ -244,12 +244,12 @@
           <div class="tabbable">
             <ul class="nav nav-pills" id="myTab">
               <li class="active">
-                <a href="#" id="solar" data-toggle="pill">Solar</a>
+                <a href="#" data-target="solar" id="solar" data-toggle="pill">Solar</a>
               </li>
-              <li><a href="#" id="temps" data-toggle="pill">Weather</a></li>
-              <li><a href="#" id="all" data-toggle="pill">All</a></li>
+              <li><a href="#" data-target="temps" id="temps"  data-toggle="pill">Weather</a></li>
+              <li><a href="#" data-target="all" id="all" data-toggle="pill">All</a></li>
               <li>
-                <a href="#" id="predict" data-toggle="pill">Predictions</a>
+                <a href="#" data-target="predict" id="predict" data-toggle="pill">Predictions</a>
               </li>
               <li>
                 <a
@@ -272,8 +272,10 @@
 
     <div class="container-fluid" style="max-height: 100vh;">
       <div class="row" style="margin-left: 0">
+        <!-- Speed up loading by using a small transparent image initially -->
+        <!-- https://stackoverflow.com/a/46673833/1404185 -->
         <img id="mountain" class="webcam placement"
-             src="https://couch.dewachen.org/img/videos/wisenet.jpg" alt="Current image of Crestone Mountain" >
+             src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Current image of Crestone Mountain" >
       </div>
       <div class="row" id="placeholder" style="height: auto;"></div>
     </div>

@@ -137,9 +137,18 @@ function translateProp(dat, val) {
   return val;
 }
 
-$('a[data-toggle="pill"]').on('show', function (e) {
+var changeTabFromJS = false;
+$('a[data-toggle="pill"]').on('shown', function (e) {
   format = e.target.id;
-  plotData(false);
+
+  if (Object.keys(d).length > 0) {
+    var url = updateParam('view', format);
+    if (!changeTabFromJS) {
+      newState(url);
+      plotData(false);
+    }
+    changeTabFromJS = false;
+  }
 });
 $('a[data-toggle="modal"]').on('show', function (e) {
   //    console.log(e);
@@ -288,36 +297,15 @@ function dayNoon(dat, minutes) {
     minutes
   );
 }
-var d = []; //Array of value arrays
+var d = {}; //Collection of value arrays
 
 // for state stuff: http://jsfiddle.net/yz30jjpz/
 // pass null for date if time now.
 // period in seconds.
-function getDataPlot(period, date, group_level, feed, suppressPushState) {
+function getDataPlot(period, date, group_level, feed) {
   if (!feed) {
     changes = false;
     pollSignal(false);
-    if (date && !droop && history.pushState && false && !suppressPushState) {
-      var obj = {
-        date: date.toISOString(),
-        period: period,
-        level: group_level,
-        clickback: period / (24 * 60 * 60),
-      };
-      //      console.log(obj);
-      var url =
-        BaseUrl +
-        '?end=' +
-        obj.date +
-        '&period=' +
-        obj.period +
-        '&level=' +
-        obj.level +
-        '&clickback=' +
-        obj.clickback;
-      history.pushState(obj, jQuery(document).find('title').text(), url);
-      //      console.log('History ' + JSON.stringify(history));
-    }
   }
   var end = date ? date : new Date();
   start_time = end.getTime() - period * 1000; /* milliseconds */
@@ -771,9 +759,6 @@ $(document).ready(function () {
   updateImage();
   droop = $.urlParam('droop');
   if (droop) {
-    $('.carousel').carousel({
-      interval: false,
-    });
     clickback = '1';
     globalDate = globalDate ? globalDate : new Date();
     // force to 0000
@@ -786,9 +771,6 @@ $(document).ready(function () {
     period = 8 * 60 * 60;
     $('#formHours').val('8');
   } else {
-    $('.carousel').carousel({
-      interval: false,
-    });
     clickback = $.urlParam('clickback') || '1';
     var end = $.urlParam('end');
     if (end) {
@@ -799,35 +781,75 @@ $(document).ready(function () {
       ) {
         /* Valid Date */
         globalDate = end;
-        var per = parseInt($.urlParam('period'), 10);
-        if (per && !isNaN(per)) {
-          period = per;
-        } else {
-          period = 36 * 60 * 60; // default
-        }
-        var level = parseInt($.urlParam('level'), 10);
-        if (level && !isNaN(level) && level >= 0 && level <= 6) {
-          groupLevel = level;
-        } else {
-          groupLevel = 0.0; // auto
-        }
       }
     }
-  }
-  window.onpopstate = function (event) {
-    if (event.state) {
-      globalDate = new Date(event.state.date);
-      period = event.state.period;
-      groupLevel = event.state.level;
-      clickback = event.state.clickback;
+    var per = parseInt($.urlParam('days'), 10);
+    if (per && !isNaN(per)) {
+      period = per * 24 * 60 * 60;
     } else {
-      globalDate = null;
-      period = 36 * 60 * 60;
-      groupLevel = 5;
-      clickback = 1;
+      period = 0;
     }
-    // suppress pushing this state again
-    getDataPlot(period, globalDate, groupLevel, false, true);
+    per = parseInt($.urlParam('hours'), 10);
+    if (per && !isNaN(per)) {
+      period += per * 60 * 60;
+    } else {
+      period = period != 0 ? period : 36 * 60 * 60; // default
+    }
+    var level = parseInt($.urlParam('level'), 10);
+    if (level && !isNaN(level) && level >= 0 && level <= 6) {
+      groupLevel = level;
+    } else {
+      groupLevel = 0.0; // auto
+    }
+    var view = $.urlParam('view');
+    if (['solar', 'temps', 'all', 'predict'].includes(view)) {
+      format = view;
+      switchTab(view);
+    } else {
+      format = 'solar'; // default
+    }
+  }
+  var initialState = {
+    globalDate: globalDate,
+    period: period,
+    groupLevel: groupLevel,
+    clickback: clickback,
+    format: format,
+  };
+  history.replaceState(initialState, '', document.location.href);
+  window.onpopstate = function (event) {
+    var state = event.state;
+    if (!state) {
+      state = {
+        globalDate: null,
+        period: 36 * 60 * 60,
+        groupLevel: 5,
+        clickback: 1,
+        format: 'solar',
+      };
+    }
+    var getNewData =
+      state.globalDate != globalDate ||
+      state.period != period ||
+      state.groupLevel != groupLevel ||
+      state.clickback != clickback;
+
+    var formatChanged = state.format != format;
+
+    globalDate = state.globalDate;
+    period = state.period;
+    groupLevel = state.groupLevel;
+    clickback = state.clickback;
+    format = state.format;
+
+    if (getNewData) {
+      getDataPlot(period, globalDate, groupLevel, false);
+    } else {
+      if (formatChanged) {
+        plotData(false);
+        switchTab(format);
+      }
+    }
   };
   // preselect "Now" in settings dialog until a time is picked
   $('input:radio[name=dateRadios]')[0].checked = true;

@@ -2,7 +2,7 @@
 # Installed at /usr/share/nginx/site/nginx/couch.dewachen.org
 # symlinked to /etc/nginx/sites-available/couch.dewachen.org
 
-# after changing a local machine (not recommended) do:
+# after changing on a local machine (not recommended) do:
 # scp ./couch.dewachen.org droot:/usr/share/nginx/site/nginx/couch.dewachen.org
 # on docean:
 # sudo nginx -t
