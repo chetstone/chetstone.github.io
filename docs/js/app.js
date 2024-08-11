@@ -795,7 +795,7 @@ $(document).ready(function () {
     } else {
       period = period != 0 ? period : 36 * 60 * 60; // default
     }
-    var level = parseInt($.urlParam('level'), 10);
+    var level = parseInt($.urlParam('groupLevel'), 10);
     if (level && !isNaN(level) && level >= 0 && level <= 6) {
       groupLevel = level;
     } else {
