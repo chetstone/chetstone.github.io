@@ -22,7 +22,7 @@ server {
 server {
   listen 443 ssl;
   server_name couch.dewachen.org;
-  expires 7d;
+  expires 10m;
   add_header Cache-Control "public";
 
   ssl on;
