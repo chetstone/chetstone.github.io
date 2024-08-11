@@ -22,8 +22,8 @@ server {
 server {
   listen 443 ssl;
   server_name couch.dewachen.org;
-
-
+  expires 7d;
+  add_header Cache-Control "public";
 
   ssl on;
     ssl_certificate /etc/letsencrypt/live/couch.dewachen.org/fullchain.pem; # managed by Certbot
