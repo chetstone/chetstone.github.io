@@ -986,6 +986,7 @@ $(document).ready(function () {
       // do other stuff for a valid form
       // Get end date
       var myDate = null; // leave as null if time is "Now"
+      var url = new URL(window.location);
       var error = false;
       if ($('input:radio[name=dateRadios]:checked').val() == 'newDate') {
         myDate = new Date(Date.parse($('#dateField').val()));
@@ -995,21 +996,27 @@ $(document).ready(function () {
         ) {
           alert('Invalid Date');
           return false;
+        } else {
+          url = updateParam('end', myDate.toISOString(), url);
         }
       }
       // Get period
       var myPeriod = 0;
       // already validated as number by html5
-      if ($('#formHours').val() != '') {
-        myPeriod += $('#formHours').val() * 60 * 60;
+      var hours = $('#formHours').val();
+      if (hours != '') {
+        myPeriod += hours * 60 * 60;
+        url = updateParam('hours', hours, url);
       }
-      if ($('#formDays').val() != '') {
-        myPeriod += $('#formDays').val() * 24 * 60 * 60;
+      var days = $('#formDays').val();
+      if (days != '') {
+        myPeriod += days * 24 * 60 * 60;
+        url = updateParam('days', days, url);
       }
       // Get resolution
       groupLevel = Number($('input:radio[name=resRadios]:checked').val());
       //            console.log(groupLevel);
-
+      url = updateParam('groupLevel', groupLevel, url);
       if (myPeriod == 0) {
         alert('Period fields not filled in');
         return false;
@@ -1017,6 +1024,7 @@ $(document).ready(function () {
       period = myPeriod;
       clickback = period / (24 * 60 * 60);
       globalDate = myDate;
+      newState(url);
       $('#settingsModal').modal('toggle');
 
       //            console.log("Valid form");
