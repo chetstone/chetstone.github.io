@@ -80,7 +80,8 @@ function updateImage() {
   if (timestamp > lastImageUpdate + 10000) {
     lastImageUpdate = timestamp;
     mountain.src =
-      'https://couch.dewachen.org/img/videos/wisenet.jpg?t=' + timestamp;
+      'https://storage.googleapis.com/crestonemountain/wisenet.jpg?t=' +
+      timestamp;
   }
   console.log(`Updated ${mountain.src}`);
 }
