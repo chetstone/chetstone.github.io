@@ -3,13 +3,12 @@
 # symlinked to /opt/homebrew/etc/nginx/servers/couch.dewachen.org
 
 # sudo nginx -t
-# sudo systemctl restart nginx
+# sudo brew services restart nginx
 
 server {
   listen 80;
   server_name c2.dewachen.org c3.dewachen.org;
 
-#  return 301 https://$host$request_uri;
   expires -1;
   add_header Cache-Control "no-store";
   root html/chetstone.github.io/docs;
@@ -20,8 +19,7 @@ server {
 
   location /wxd {
     proxy_pass http://localhost:5984;
-    # Not sure why this is necessary, anybody should be able to access the db while reading
-    # proxy_set_header Authorization "YWRtaW46d2FyaG9yc2UtZ2xhc3MtZmFsc2UtbW9sZWhpbGw=";
+
     expires off;
     proxy_redirect off;
     proxy_set_header Host $host;
