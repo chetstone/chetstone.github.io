@@ -9,7 +9,10 @@ $.urlParam = function (name) {
   }
 };
 
-function updateParam(key, value, url = new URL(window.location)) {
+function updateParam(key, value, url) {
+  if (!url) {
+    url = new URL(window.location);
+  }
   if ('URLSearchParams' in window) {
     url.searchParams.set(key, value);
   } else {
