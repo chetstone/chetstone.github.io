@@ -10,8 +10,8 @@ server {
   server_name c2.dewachen.org c3.dewachen.org;
 
 #  return 301 https://$host$request_uri;
-  expires 10m;
-  add_header Cache-Control "public";
+  expires -1;
+  add_header Cache-Control "no-store";
   root html/chetstone.github.io/docs;
 
   location = / {
