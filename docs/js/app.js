@@ -167,6 +167,11 @@ $('a.carousel-control.right').on('click', function (e) {
     return false;
   }
 });
+$('#acme').click(function () {
+  // delete URL params, reload plain vanilla page
+  window.location.search = '';
+  return true;
+});
 
 function setPlaceholderHeight() {
   placeholder = $('#placeholder');
