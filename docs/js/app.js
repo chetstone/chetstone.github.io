@@ -303,14 +303,15 @@ function dayNoon(dat, minutes) {
   );
 }
 var d = {}; //Collection of value arrays
+var changes = false;
 
 // for state stuff: http://jsfiddle.net/yz30jjpz/
 // pass null for date if time now.
 // period in seconds.
 function getDataPlot(period, date, group_level, feed) {
   if (!feed) {
-    changes = false;
     pollSignal(false);
+    changes = false;
   }
   var end = date ? date : new Date();
   start_time = end.getTime() - period * 1000; /* milliseconds */
@@ -680,8 +681,8 @@ function getDataPlot(period, date, group_level, feed) {
 
       if (feed) {
         //console.log('Feed is ' + feed);
-        changes = true;
         pollSignal(true);
+        changes = true;
         longpoll('now');
       }
 
@@ -728,8 +729,6 @@ function plotData(crosshair) {
   updateLegend(); // initialize legend with values at r. end of chart
 }
 
-var changes = false;
-
 function longpoll(last_seq) {
   // http://schinckel.net/2012/01/22/jquery-long-poll-for-couchdb-changes./
   var url = BaseUrl;
@@ -747,6 +746,9 @@ function longpoll(last_seq) {
       // Now we need to see what to do with the data.
       if (data) {
         if (data.results.length && changes) {
+          // not sure why we can't just process the data here
+          // instead of firing off an event.
+          // Schinckel just says he thought it would be a good idea.
           $(document).trigger('longpoll-data-wxd', [data.results]);
         }
         // And set up the re-run of the fetch query.
@@ -762,7 +764,10 @@ function pollSignal(flag) {
   //  console.log('pollSignal: ', flag);
   var color = flag ? '#D99B79' : 'transparent';
   $('#hoverdata').css({ backgroundColor: color });
-  $('.carousel').carousel(flag ? 'pause' : 'cycle');
+  if (flag != changes) {
+    var url = updateParam('changes', flag ? '1' : '0');
+    newState(url);
+  }
 }
 
 $(document).ready(function () {
@@ -781,49 +786,7 @@ $(document).ready(function () {
     period = 8 * 60 * 60;
     $('#formHours').val('8');
   } else {
-    var end = $.urlParam('end');
-    if (end) {
-      end = new Date(Date.parse(end));
-      if (
-        Object.prototype.toString.call(end) === '[object Date]' &&
-        !isNaN(end.getTime())
-      ) {
-        /* Valid Date */
-        globalDate = end;
-      }
-    }
-    var per = parseInt($.urlParam('days'), 10);
-    if (per && !isNaN(per)) {
-      period = per * 24 * 60 * 60;
-    } else {
-      period = 0;
-    }
-    per = parseInt($.urlParam('hours'), 10);
-    if (per && !isNaN(per)) {
-      period += per * 60 * 60;
-    } else {
-      period = period != 0 ? period : 36 * 60 * 60; // default
-    }
-    var click = $.urlParam('clickback');
-    if (click) {
-      clickback = click;
-    } else {
-      clickback = period / (24 * 60 * 60);
-    }
-
-    var level = parseInt($.urlParam('groupLevel'), 10);
-    if (level && !isNaN(level) && level >= 0 && level <= 6) {
-      groupLevel = level;
-    } else {
-      groupLevel = 0.0; // auto
-    }
-    var view = $.urlParam('view');
-    if (['solar', 'temps', 'all', 'predict'].includes(view)) {
-      format = view;
-      switchTab(view);
-    } else {
-      format = 'solar'; // default
-    }
+    getURLParams();
   }
   var initialState = {
     globalDate: globalDate,
@@ -833,40 +796,6 @@ $(document).ready(function () {
     format: format,
   };
   history.replaceState(initialState, '', document.location.href);
-  window.onpopstate = function (event) {
-    var state = event.state;
-    if (!state) {
-      state = {
-        globalDate: null,
-        period: 36 * 60 * 60,
-        groupLevel: 5,
-        clickback: 1.5,
-        format: 'solar',
-      };
-    }
-    var getNewData =
-      state.globalDate != globalDate ||
-      state.period != period ||
-      state.groupLevel != groupLevel ||
-      state.clickback != clickback;
-
-    var formatChanged = state.format != format;
-
-    globalDate = state.globalDate;
-    period = state.period;
-    groupLevel = state.groupLevel;
-    clickback = state.clickback;
-    format = state.format;
-
-    if (getNewData) {
-      getDataPlot(period, globalDate, groupLevel, false);
-    } else {
-      if (formatChanged) {
-        plotData(false);
-        switchTab(format);
-      }
-    }
-  };
   // preselect "Now" in settings dialog until a time is picked
   $('input:radio[name=dateRadios]')[0].checked = true;
   setPlaceholderHeight();
@@ -953,12 +882,13 @@ $(document).ready(function () {
     var feed = changes;
     if (changes) {
       // stop feed right away
-      changes = !changes;
       pollSignal(false);
+      changes = !changes;
       /*       console.log('Stopping longpoll');*/
     }
     // but don't start it until refresh is done
-
+    // and we only do longpolling if
+    // globalDate is null, i.e. endtime is "now"
     if (globalDate == null) getDataPlot(period, globalDate, groupLevel, !feed);
   });
 
