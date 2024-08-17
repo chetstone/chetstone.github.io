@@ -13,10 +13,10 @@ var droop = null; // URL param "1" to enable special test code. If "2" will sear
 var droopImage = 'http://i.imgur.com/ZcNoh9m.png';
 var stopImage =
   'https://img.clipartfest.com/0f4cbe56f78689412ff7a6ad5a1dd4e4_stop-sign-clipart-clipart-of-stop-sign_512-309.png';
-var clickback = '1'; // param integer, clicking in image moves back number of days
 var format = 'solar';
 // default 36 hours in seconds
 var period = 36 * 60 * 60;
+var clickback = 1.5; // param integer, clicking in image moves back number of days
 var min_measure = 2 * 60 * 60 * 1000;
 // 0.5 degree / 5 mins
 var max_change = 0.5 / (5 * 60 * 1000);
@@ -776,7 +776,6 @@ $(document).ready(function () {
     period = 8 * 60 * 60;
     $('#formHours').val('8');
   } else {
-    clickback = $.urlParam('clickback') || '1';
     var end = $.urlParam('end');
     if (end) {
       end = new Date(Date.parse(end));
@@ -800,6 +799,13 @@ $(document).ready(function () {
     } else {
       period = period != 0 ? period : 36 * 60 * 60; // default
     }
+    var click = $.urlParam('clickback');
+    if (click) {
+      clickback = click;
+    } else {
+      clickback = period / (24 * 60 * 60);
+    }
+
     var level = parseInt($.urlParam('groupLevel'), 10);
     if (level && !isNaN(level) && level >= 0 && level <= 6) {
       groupLevel = level;
@@ -829,7 +835,7 @@ $(document).ready(function () {
         globalDate: null,
         period: 36 * 60 * 60,
         groupLevel: 5,
-        clickback: 1,
+        clickback: 1.5,
         format: 'solar',
       };
     }

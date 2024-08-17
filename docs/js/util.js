@@ -38,17 +38,17 @@ function newState(url) {
   history.pushState(state, '', url);
 }
 function prevDate(thisDate, incr) {
+  var now = new Date();
   if (!thisDate) {
-    thisDate = new Date();
+    thisDate = now;
   }
-  return new Date(
-    thisDate.getFullYear(),
-    thisDate.getMonth(),
-    thisDate.getDate() - parseInt(incr, 10),
-    thisDate.getHours(),
-    thisDate.getMinutes(),
-    thisDate.getSeconds()
+  var date = new Date(
+    thisDate.getTime() - parseFloat(incr) * 24 * 60 * 60 * 1000
   );
+  if (date.getTime() >= now.getTime()) {
+    return null;
+  }
+  return date;
 }
 
 function do_log(arg) {
