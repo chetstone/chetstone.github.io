@@ -261,7 +261,7 @@ function updateLegend() {
     }
   }
   if (best_date) {
-    $('#hoverdata').text(best_date);
+    $('#hoverdata').text(best_date.toString().replace(/GMT.*$/, ''));
     $('#dateField').val(best_date.toLocaleString('en-US', { hour12: false }));
   }
 }
@@ -398,8 +398,8 @@ function getDataPlot(period, date, group_level, feed) {
             group_level == 4
               ? 0
               : group_level == 6
-              ? kstuff[5]
-              : kstuff[4] * sieve_interval
+                ? kstuff[5]
+                : kstuff[4] * sieve_interval
           )
         );
 
@@ -703,7 +703,12 @@ function plotData(crosshair) {
     ],
     yaxes: [{}, { reserveSpace: true, show: false }],
     crosshair: { mode: 'x' },
-    grid: { hoverable: true, autoHighlight: false },
+    grid: {
+      hoverable: true,
+      autoHighlight: false,
+      borderWidth: 1,
+      margin: { left: window.innerWidth < 900 ? -30 : 0, bottom: 10 },
+    },
     legend: { position: 'nw', show: true },
   });
   if (crosshair) {
@@ -751,7 +756,7 @@ function longpoll(last_seq) {
 function pollSignal(flag) {
   //  console.log('pollSignal: ', flag);
   var color = flag ? '#D99B79' : 'transparent';
-  $('footer').css({ backgroundColor: color });
+  $('#hoverdata').css({ backgroundColor: color });
   $('.carousel').carousel(flag ? 'pause' : 'cycle');
 }
 
