@@ -33,10 +33,13 @@ function newState(url) {
     format: format,
     changes: changes,
   };
+  console.log('pushState called with state: ', JSON.stringify(state));
   history.pushState(state, '', url);
 }
 window.onpopstate = function (event) {
   var state = event.state;
+  console.log('onPopState called with state: ', JSON.stringify(state));
+
   if (!state) {
     state = {
       globalDate: null,
@@ -61,10 +64,9 @@ window.onpopstate = function (event) {
   groupLevel = state.groupLevel;
   clickback = state.clickback;
   format = state.format;
-  changes = state.changes;
 
   if (getNewData) {
-    getDataPlot(period, globalDate, groupLevel, changes);
+    getDataPlot(period, globalDate, groupLevel, state.changes, true);
   } else {
     if (formatChanged) {
       plotData(false);
@@ -142,14 +144,14 @@ function getURLParams() {
   var days = $.urlParam('days');
   if (days !== null) {
     days = parseInt(days, 10);
-    if (days && !isNaN(days)) {
+    if (!isNaN(days)) {
       myPeriod = days * 24 * 60 * 60;
     }
   }
   var hours = $.urlParam('hours');
   if (hours !== null) {
     hours = parseInt(hours, 10);
-    if (hours && !isNaN(hours)) {
+    if (!isNaN(hours)) {
       if (myPeriod !== null) {
         myPeriod += hours * 60 * 60;
       } else {
@@ -170,7 +172,7 @@ function getURLParams() {
   var level = $.urlParam('groupLevel');
   if (level !== null) {
     level = parseInt(level, 10);
-    if (level && !isNaN(level) && level >= 0 && level <= 6) {
+    if (!isNaN(level) && level >= 0 && level <= 6) {
       groupLevel = level;
     } else {
       groupLevel = 0.0; // auto
@@ -179,7 +181,7 @@ function getURLParams() {
   var change = $.urlParam('changes');
   if (change !== null) {
     change = parseInt(change, 10);
-    if (change && !isNaN(change) && change >= 0 && change <= 1) {
+    if (!isNaN(change) && change >= 0 && change <= 1) {
       changes = !!change;
     }
   }
@@ -191,4 +193,22 @@ function getURLParams() {
   } else {
     format = 'solar'; // default
   }
+}
+
+function updateChanges() {
+  // only makes sense if time is 'now'
+  // no sense reload exactly the same data...
+  // and we only do longpolling if
+  // globalDate is null, i.e. endtime is "now"
+
+  if (globalDate !== null) {
+    return;
+  }
+  if (changes) {
+    // stop feed right away
+    pollSignal(false);
+    console.log('Stopping longpoll');
+  }
+  // but don't start it until refresh is done
+  getDataPlot(period, globalDate, groupLevel, !changes, false);
 }

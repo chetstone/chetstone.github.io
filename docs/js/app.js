@@ -156,14 +156,14 @@ $('a[data-toggle="modal"]').on('show', function (e) {
 $('a.carousel-control.left').click(function (e) {
   if (clickback) {
     globalDate = prevDate(globalDate, clickback);
-    getDataPlot(period, globalDate, groupLevel, false);
+    getDataPlot(period, globalDate, groupLevel, false, false);
     return false;
   }
 });
 $('a.carousel-control.right').on('click', function (e) {
   if (clickback) {
     globalDate = prevDate(globalDate, '-' + clickback);
-    getDataPlot(period, globalDate, groupLevel, false);
+    getDataPlot(period, globalDate, groupLevel, false, false);
     return false;
   }
 });
@@ -308,9 +308,15 @@ var changes = false;
 // for state stuff: http://jsfiddle.net/yz30jjpz/
 // pass null for date if time now.
 // period in seconds.
-function getDataPlot(period, date, group_level, feed) {
+function getDataPlot(period, date, group_level, feed, popState) {
+  console.log('getDataPlot called with feed ', feed);
   if (!feed) {
     pollSignal(false);
+    if (feed != changes && !popState) {
+      var url = updateParam('changes', '0');
+      changes = false;
+      newState(url);
+    }
     changes = false;
   }
   var end = date ? date : new Date();
@@ -474,7 +480,7 @@ function getDataPlot(period, date, group_level, feed) {
         } else if (droop == 2 && !curve) {
           // keep looking
           globalDate = prevDate(globalDate, clickback);
-          getDataPlot(period, globalDate, groupLevel, false);
+          getDataPlot(period, globalDate, groupLevel, false, false);
           return;
         }
 
@@ -682,8 +688,15 @@ function getDataPlot(period, date, group_level, feed) {
       if (feed) {
         //console.log('Feed is ' + feed);
         pollSignal(true);
+        if (feed != changes) {
+          if (!popState) {
+            var url = updateParam('changes', '1');
+            changes = true;
+            newState(url);
+          }
+          longpoll('now');
+        }
         changes = true;
-        longpoll('now');
       }
 
       plotData(crosshair);
@@ -764,10 +777,6 @@ function pollSignal(flag) {
   //  console.log('pollSignal: ', flag);
   var color = flag ? '#D99B79' : 'transparent';
   $('#hoverdata').css({ backgroundColor: color });
-  if (flag != changes) {
-    var url = updateParam('changes', flag ? '1' : '0');
-    newState(url);
-  }
 }
 
 $(document).ready(function () {
@@ -794,12 +803,13 @@ $(document).ready(function () {
     groupLevel: groupLevel,
     clickback: clickback,
     format: format,
+    changes: changes,
   };
   history.replaceState(initialState, '', document.location.href);
   // preselect "Now" in settings dialog until a time is picked
   $('input:radio[name=dateRadios]')[0].checked = true;
   setPlaceholderHeight();
-  getDataPlot(period, globalDate, groupLevel, false);
+  getDataPlot(period, globalDate, groupLevel, changes, true);
   $('#placeholder').bind('plothover', function (event, pos, item) {
     latestPosition = pos;
     if (!updateLegendTimeout)
@@ -876,20 +886,7 @@ $(document).ready(function () {
   $('#hoverdata').text(initstr);
 
   $('#mountain, footer').click(function () {
-    // only makes sense if time is 'now'
-    // no sense reload exactly the same data...
-    /*     console.log('Carousel clicked');*/
-    var feed = changes;
-    if (changes) {
-      // stop feed right away
-      pollSignal(false);
-      changes = !changes;
-      /*       console.log('Stopping longpoll');*/
-    }
-    // but don't start it until refresh is done
-    // and we only do longpolling if
-    // globalDate is null, i.e. endtime is "now"
-    if (globalDate == null) getDataPlot(period, globalDate, groupLevel, !feed);
+    updateChanges();
   });
 
   // Validate
@@ -974,7 +971,13 @@ $(document).ready(function () {
       $('#settingsModal').modal('toggle');
 
       //            console.log("Valid form");
-      getDataPlot(period, globalDate, groupLevel, false);
+      getDataPlot(
+        period,
+        globalDate,
+        groupLevel,
+        globalDate === null ? changes : false,
+        false
+      );
 
       return false;
     },
