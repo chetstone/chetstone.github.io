@@ -118,11 +118,14 @@ function processCollector(arr) {
 function updateImage() {
   var timestamp = new Date().getTime();
   var mountain = document.getElementById('mountain');
+  var imgURL = isAcme
+    ? 'https://storage.googleapis.com/crestonemountain/wisenet.jpg?t='
+    : navigator.userAgent.match(/iPad.*9_3/)
+      ? 'img/wisenet/ipad3_landscape.jpg?t='
+      : 'img/wisenet/large.jpg?t=';
   if (timestamp > lastImageUpdate + 10000) {
     lastImageUpdate = timestamp;
-    mountain.src =
-      'https://storage.googleapis.com/crestonemountain/wisenet.jpg?t=' +
-      timestamp;
+    mountain.src = imgURL + timestamp;
   }
   console.log(`Updated ${mountain.src}`);
 }

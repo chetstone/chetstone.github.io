@@ -1,6 +1,6 @@
 var ibmUrl =
   'https://b482ecaa-1ac2-4933-bec9-ecade207eea0-bluemix.cloudant.com';
-var BaseUrl = 'https://couch.dewachen.org';
+var BaseUrl = document.location.origin;
 var isAcme = document.location.hostname.startsWith('acme');
 if (isAcme) {
   document.getElementById('appFavicon').setAttribute('href', 'favicon_sun.ico');
