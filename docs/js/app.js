@@ -147,8 +147,8 @@ $('a[data-toggle="pill"]').on('shown', function (e) {
       newState(url);
       plotData(false);
     }
-    changeTabFromJS = false;
   }
+  changeTabFromJS = false;
 });
 $('a[data-toggle="modal"]').on('show', function (e) {
   //    console.log(e);
@@ -267,7 +267,7 @@ function updateLegend() {
   }
   if (best_date) {
     $('#hoverdata').text(best_date.toString().replace(/GMT.*$/, ''));
-    $('#dateField').val(best_date.toLocaleString('en-US', { hour12: false }));
+    $('#dateField').val(best_date.toString());
   }
 }
 
@@ -309,7 +309,12 @@ var changes = false;
 // pass null for date if time now.
 // period in seconds.
 function getDataPlot(period, date, group_level, feed, popState) {
-  console.log('getDataPlot called with feed ', feed);
+  console.log(
+    'getDataPlot called with feed, changes, popState ',
+    feed,
+    changes,
+    popState
+  );
   if (!feed) {
     pollSignal(false);
     if (feed != changes && !popState) {
@@ -684,16 +689,22 @@ function getDataPlot(period, date, group_level, feed, popState) {
         }
       });
       //      console.log(dseries['predict']);
+      console.log(
+        'Ready to start longpoll if feed and ! changes: Feed, changes, popState ',
+        feed,
+        changes,
+        popState
+      );
 
       if (feed) {
-        //console.log('Feed is ' + feed);
         pollSignal(true);
         if (feed != changes) {
           if (!popState) {
             var url = updateParam('changes', '1');
-            changes = true;
             newState(url);
           }
+          changes = true;
+
           longpoll('now');
         }
         changes = true;
@@ -808,8 +819,7 @@ $(document).ready(function () {
   history.replaceState(initialState, '', document.location.href);
   // preselect "Now" in settings dialog until a time is picked
   $('input:radio[name=dateRadios]')[0].checked = true;
-  setPlaceholderHeight();
-  getDataPlot(period, globalDate, groupLevel, changes, true);
+
   $('#placeholder').bind('plothover', function (event, pos, item) {
     latestPosition = pos;
     if (!updateLegendTimeout)
@@ -982,4 +992,11 @@ $(document).ready(function () {
       return false;
     },
   }); // end set validate options
+  // Now display data
+  setPlaceholderHeight();
+  var feed = changes;
+  // temporarily turn changes off to force getDataPlot to start longpoll
+  changes = false;
+
+  getDataPlot(period, globalDate, groupLevel, feed, true);
 }); // end document.ready
