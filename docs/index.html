@@ -6,7 +6,7 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1"
-    />
+      />
     <meta name="description" content="" />
     <meta name="author" content="" />
     <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
@@ -15,74 +15,86 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.min.css"
-    />
+      />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap-responsive.min.css"
-    />
+      />
     <style>
-     label.valid {
-       width: 24px;
-       height: 24px;
-       background: url(img/valid.png) center center no-repeat;
-       display: inline-block;
-       text-indent: -9999px;
-     }
-     label.error {
-       font-weight: bold;
-       color: red;
-       padding: 2px 8px;
-       margin-top: 2px;
-     }
-     #mountain{
-       display: block;
-     }
-     #acme{
-       position: relative;
-       z-index: 1;
-     }
-     @media (max-height: 400px)
-     {
-       #mountain
-       {
-         display: none;
-       }
-     }
-     .webcam {
-       height: 30vh;
-       width: 100vw;
-       margin-top: 41px
-     }
-     @supports (object-position: center 5%) {
-       .placement {
-         object-position: center 0;
-         object-fit: cover;
-       }
-     }
-     @supports not (object-position: center 5%) {
-       .placement {
-         object-fit: cover;
-       }
-     }
+      label.valid {
+          width: 24px;
+          height: 24px;
+          background: url(img/valid.png) center center no-repeat;
+          display: inline-block;
+          text-indent: -9999px;
+      }
+      label.error {
+          font-weight: bold;
+          color: red;
+          padding: 2px 8px;
+          margin-top: 2px;
+      }
+      #mountain{
+          display: block;
+      }
+      #acme{
+          position: relative;
+          z-index: 1;
+      }
+      @media (max-height: 400px)
+      {
+          #mountain
+          {
+              display: none;
+          }
+      }
+      .webcam {
+          height: 30vh;
+          width: 100vw;
+      }
+
+      @media (min-width: 980px) {
+          .carousel {
+              margin-top: 40px;
+          }
+      }
+      @media (max-width: 979px) {
+          .carousel {
+              margin-top: -20px;
+          }
+
+      }
+      @supports (object-position: center 5%) {
+          .placement {
+              object-position: center 0;
+              object-fit: cover;
+          }
+      }
+      @supports not (object-position: center 5%) {
+          .placement {
+
+              object-fit: cover;
+          }
+      }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/headjs/0.99/head.min.js"></script>
     <script>
       head.js(
           'https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?version=4.8.0&features=URL',
-        'https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.1/jquery.min.js',
-        'https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.10.0/jquery.validate.min.js',
-        'https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.10.0/additional-methods.min.js',
-        'js/lib/jquery.couch.js',
-        'js/lib/flot-minify.js',
-        'js/lib/jquery.flot.crosshair.js',
-        'js/lib/jquery.flot.time.min.js',
-        'js/lib/jquery.flot.resize.js',
-        'js/lib/jquery.flot.state.js',
-        'js/lib/curveLines.js',
-        'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.min.js',
-        'js/util.js',
-        'js/app.js'
+          'https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.1/jquery.min.js',
+          'https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.10.0/jquery.validate.min.js',
+          'https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.10.0/additional-methods.min.js',
+          'js/lib/jquery.couch.js',
+          'js/lib/flot-minify.js',
+          'js/lib/jquery.flot.crosshair.js',
+          'js/lib/jquery.flot.time.min.js',
+          'js/lib/jquery.flot.resize.js',
+          'js/lib/jquery.flot.state.js',
+          'js/lib/curveLines.js',
+          'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.min.js',
+          'js/util.js',
+          'js/app.js'
       );
     </script>
   </head>
@@ -93,14 +105,14 @@
         id="settingsModal"
         class="modal hide fade"
         style="-webkit-overflow-scrolling: touch;"
-      >
+        >
         <div class="modal-header">
           <button
             type="button"
             class="close"
             data-dismiss="modal"
             aria-hidden="true"
-          >
+            >
             &times;
           </button>
           <h3>Period settings</h3>
@@ -116,7 +128,7 @@
                   name="dateRadios"
                   id="radioNow"
                   value="Now"
-                />
+                  />
                 Now
               </label>
               <label class="radio" style="float:left;margin-right:15px">
@@ -126,7 +138,7 @@
                   id="radioDatefield"
                   value="newDate"
                   checked
-                />
+                  />
                 Enter a date/time for period end&nbsp;
               </label>
               <input
@@ -136,13 +148,13 @@
                 tabindex="1"
                 style="margin-bottom:0"
                 value=""
-              />
+                />
             </div>
             <!-- control-group -->
 
             <span class="help-block"
-              >Period length (Enter hours or days or both):&nbsp;</span
-            >
+                  >Period length (Enter hours or days or both):&nbsp;</span
+                                                                       >
             <div class="form-inline">
               <div class="control-group">
                 <label for="formHours">Hours</label>
@@ -153,7 +165,7 @@
                   class="period input-small"
                   placeholder="Hours"
                   tabindex="2"
-                />
+                  />
                 <label for="formDays">Days </label>
                 <input
                   id="formDays"
@@ -162,7 +174,7 @@
                   class="period input-small"
                   placeholder="Days"
                   tabindex="3"
-                />
+                  />
               </div>
               <!-- control-group -->
 
@@ -174,24 +186,24 @@
                     name="resRadios"
                     id="radioMinutes"
                     value="6"
-                  />Minutes</label
-                >
+                    />Minutes</label
+                               >
                 <label class="radio">
                   <input
                     type="radio"
                     name="resRadios"
                     id="radio6Minutes"
                     value="5"
-                  />5 Minutes</label
-                >
+                    />5 Minutes</label
+                                 >
                 <label class="radio">
                   <input
                     type="radio"
                     name="resRadios"
                     id="radioHours"
                     value="4"
-                  />Hours</label
-                >
+                    />Hours</label
+                             >
                 <label class="radio">
                   <input
                     type="radio"
@@ -199,8 +211,8 @@
                     id="radioAuto"
                     value="0"
                     checked
-                  />Auto</label
-                >
+                    />Auto</label
+                            >
               </div>
               <!-- control-group -->
             </div>
@@ -220,6 +232,42 @@
       </div>
       <!-- settingsModal -->
     </div>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <!-- <div class="container"> -->
+          <a
+            class="btn btn-navbar"
+            data-toggle="collapse"
+            data-target=".nav-collapse"
+            >
+            <span class="icon-bar"></span> <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a id="acme" class="brand" href="#">&nbsp;Acme</a>
+          <div class="nav-collapse collapse">
+            <div class="tabbable">
+              <ul class="nav nav-pills" id="myTab">
+                <li class="active">
+                  <a href="#" data-target="solar" id="solar" data-toggle="pill">Solar</a>
+                </li>
+                <li><a href="#" data-target="temps" id="temps"  data-toggle="pill">Weather</a></li>
+                <li><a href="#" data-target="all" id="all" data-toggle="pill">All</a></li>
+                <li>
+                  <a
+                    href="#"
+                    data-target="#settingsModal"
+                    id="settings"
+                    data-toggle="modal"
+                    >Period</a
+                             >
+                </li>
+              </ul>
+              <!-- </div> div class container -->
+          </div>
+          <!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
     <!-- Unclassed div -->
     <div id="this-carousel-id" class="carousel slide" style="margin-bottom: 0">
       <!-- class of slide for animation -->
@@ -227,68 +275,32 @@
         <div class="item active">
           <!-- class of active since it's the first item -->
           <img id='mountain' class="webcam placement"
-         src='https://storage.googleapis.com/crestonemountain/wisenet.jpg'
-              alt="Current image of Crestone Mountain"
-          />
+               src='https://storage.googleapis.com/crestonemountain/wisenet.jpg'
+               alt="Current image of Crestone Mountain"
+               />
           <!-- <div class="carousel-caption"> -->
-          <!--   <p></p> -->
-          <!-- </div> -->
+            <!--   <p></p> -->
+            <!-- </div> -->
         </div>
 
       </div>
       <!-- /.carousel-inner -->
       <!--  Next and Previous controls below
-             href values must reference the id for this carousel -->
+            href values must reference the id for this carousel -->
       <a
         class="carousel-control left"
         href="#"
         data-slide="prev"
         >&lsaquo;</a
-      >
+                   >
       <a
         class="carousel-control right"
         href="#"
         data-slide="next"
         >&rsaquo;</a
-      >
+                   >
     </div>
     <!-- /.carousel -->
-    <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
-        <!-- <div class="container"> -->
-        <a
-          class="btn btn-navbar"
-          data-toggle="collapse"
-          data-target=".nav-collapse"
-        >
-          <span class="icon-bar"></span> <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </a>
-        <a id="acme" class="brand" href="#">&nbsp;Acme</a>
-        <div class="nav-collapse collapse">
-          <div class="tabbable">
-            <ul class="nav nav-pills" id="myTab">
-              <li class="active">
-                <a href="#" data-target="solar" id="solar" data-toggle="pill">Solar</a>
-              </li>
-              <li><a href="#" data-target="temps" id="temps"  data-toggle="pill">Weather</a></li>
-              <li><a href="#" data-target="all" id="all" data-toggle="pill">All</a></li>
-              <li>
-                <a
-                  href="#"
-                  data-target="#settingsModal"
-                  id="settings"
-                  data-toggle="modal"
-                  >Period</a
-                >
-              </li>
-            </ul>
-            <!-- </div> div class container -->
-          </div>
-          <!--/.nav-collapse -->
-        </div>
-      </div>
-    </div>
 
     <!-- Main hero unit for a primary marketing message or call to action -->
 
