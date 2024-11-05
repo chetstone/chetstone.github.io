@@ -2,23 +2,16 @@ Updating
 
 This github repo (chetstone.github.io) is the working code for acme.dewachen.org.
 
-The digital ocean clone is at /usr/share/nginx/site (linked to ~/site) and is the working code for
-couch.dewachen.org.
+The gesar clone is at /opt/homebrew/var/www/chetstone.github.io  (linked to ~/prj/dewachenapp) and is the working code for
+c2.dewachen.org (192.168.108.75) and c3.dewachen.org (10.147.17.212). These sites are only available on the local LAN or via zerotier.
 
-When developing, best to work directly on docean, using emacs in a terminal
-window (X emacs or tramp are both slow).
+When developing, best to work directly on gesar.
 
-Go to the Cloudflare dashboard, select Dewachen, go to the Caching Configuration
-page and turn on development mode. Make sure caching is disabled in the test browser.
 I found Chrome works a lot better than Safari for me.
 
 Push the changes to github, which will update acme.dewachen.org.
-(Currently I couldn't push directly from docean to github. Had to fetch the latest on Serendipity and then push to there.)
-
-When done, purge the cloudflare cache.
 
 NOTE:
-
 When adding new data series, add it here before adding it to the database.
 This component does not handle unknown data.
 
