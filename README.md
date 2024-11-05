@@ -1,4 +1,4 @@
-## working code for acme.dewachen.org
+## Working code for acme.dewachen.org
 
 This github repo (chetstone.github.io) is the working code for acme.dewachen.org.
 
@@ -9,16 +9,17 @@ When developing, best to work directly on gesar. I found Chrome works a lot bett
 
 Push the changes to github, which will update acme.dewachen.org.
 
-### NOTE:
-When adding new data series, add it here before adding it to the database.
+### NOTES
+
+1. When adding new data series, add it here before adding it to the database.
   This component does not handle unknown data.
 
-#### The name of the value here is the concatenation of the sensor name and the attribute.
+2.  The name of the value here is the concatenation of the sensor name and the attribute.
 e.g.
 the Temp attribute of 2023-01-11T01:58:00Z.Garage
 is called GarageTemp here (js/app.js)
 
-#### NOTE: the byDate MapReduce function suppresses Humidity-- only returns Probe and Temp values.
+3. The byDate MapReduce function suppresses Humidity-- only returns Probe and Temp values.
 (So why are we storing humidity in the db???)
 
 ### URL PARAMS:
