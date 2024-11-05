@@ -1,13 +1,13 @@
 ## Working code for acme.dewachen.org
 
-This github repo (chetstone.github.io) is the working code for acme.dewachen.org.
+This github repo (`chetstone.github.io`) is the working code for acme.dewachen.org.
 
-The gesar clone is at /opt/homebrew/var/www/chetstone.github.io  (linked to ~/prj/dewachenapp) and is the working code for
-c2.dewachen.org (192.168.108.75) and c3.dewachen.org (10.147.17.212). These sites are only available on the local LAN or via zerotier.
+The gesar clone is at `/opt/homebrew/var/www/chetstone.github.io`  (linked to `~/prj/dewachenapp`) and is the working code for
+`c2.dewachen.org` (192.168.108.75) and `c3.dewachen.org` (10.147.17.212). These sites are only available on the local LAN or via zerotier.
 
-When developing, best to work directly on gesar. I found Chrome works a lot better than Safari for me.
+When developing, best to work directly on Gesar. I found Chrome works a lot better than Safari for me.
 
-Push the changes to github, which will update acme.dewachen.org.
+Push the changes to Github, which will update acme.dewachen.org.
 
 ### NOTES
 
