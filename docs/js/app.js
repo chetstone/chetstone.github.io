@@ -304,6 +304,7 @@ function dayNoon(dat, minutes) {
 }
 var d = {}; //Collection of value arrays
 var changes = false;
+var wasPolling = false;
 
 // for state stuff: http://jsfiddle.net/yz30jjpz/
 // pass null for date if time now.
@@ -890,6 +891,27 @@ $(document).ready(function () {
         plotData(false);
       }
     });
+  });
+
+  // Handle page visibility to prevent rendering artifacts in background tabs
+  $(document).on('visibilitychange', function () {
+    if (document.hidden) {
+      // Tab has gone into the background
+      if (changes) {
+        // console.log('Tab hidden, pausing long-poll.');
+        wasPolling = true;
+        changes = false; // This will cause the long-poll loop to stop
+        pollSignal(false);
+      }
+    } else {
+      // Tab has come back to the foreground
+      if (wasPolling) {
+        // console.log('Tab visible, resuming long-poll and redrawing chart.');
+        wasPolling = false;
+        // A full refresh will clear any rendering artifacts and fetch all missed updates
+        getDataPlot(period, globalDate, groupLevel, true, false);
+      }
+    }
   });
 
   // wait till doc ready to display instructions

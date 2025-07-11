@@ -77,7 +77,10 @@
           }
       }
     </style>
-
+    <script>
+      // must run before you include jquery.flot.resize.js
+      $.resize.throttleWindow = false;
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/headjs/0.99/head.min.js"></script>
     <script>
       head.js(
