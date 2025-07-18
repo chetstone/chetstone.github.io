@@ -740,6 +740,10 @@ function plotData(crosshair) {
       borderWidth: 1,
       margin: { left: window.innerWidth < 900 ? -30 : 0, bottom: 10 },
     },
+    selection: {
+      mode: 'x', // Allow selection along the x-axis (time)
+      color: 'rgba(128, 128, 255, 0.4)', // A nice semi-transparent blue for the selection area
+    },
     legend: { position: 'nw', show: true },
   });
   if (crosshair) {
@@ -826,6 +830,60 @@ $(document).ready(function () {
     if (!updateLegendTimeout)
       updateLegendTimeout = setTimeout(updateLegend, 50);
   });
+  // ===================================================================
+  // == ADD THIS NEW EVENT HANDLER FOR COPYING JSON DATA TO CLIPBOARD ==
+  // ===================================================================
+  $('#placeholder').bind('plotselected', function (event, ranges) {
+    // Get the time range from the selection
+    var from = ranges.xaxis.from.valueOf();
+    var to = ranges.xaxis.to.valueOf();
+    console.log('In plotselected handler');
+    var selectedData = {};
+
+    // The application's complete dataset is stored in the global 'd' variable.
+    // We iterate through it to filter the data within the selected range.
+    for (var seriesName in d) {
+      if (d.hasOwnProperty(seriesName)) {
+        // Filter the points for the current series
+        var seriesPoints = d[seriesName].filter(function (point) {
+          var pointTime = point[0].getTime();
+          return pointTime >= from && pointTime <= to;
+        });
+
+        // If there's any data in the selected range for this series, add it.
+        if (seriesPoints.length > 0) {
+          selectedData[seriesName] = seriesPoints;
+        }
+      }
+    }
+
+    // Convert the filtered data object to a formatted JSON string
+    var jsonString = JSON.stringify(selectedData, null, 2);
+
+    // Use the modern Navigator Clipboard API to copy the text
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(jsonString).then(
+        function () {
+          alert('Selected JSON data has been copied to the clipboard.');
+        },
+        function (err) {
+          console.error('Could not copy text to clipboard: ', err);
+          alert('Failed to copy data. See console for details.');
+        }
+      );
+    } else {
+      // Fallback for older browsers or non-secure contexts (http)
+      console.error(
+        'Clipboard API is not available on this page. This feature requires a secure (HTTPS) connection.'
+      );
+    }
+
+    // Optional: Clear the selection on the plot after copying
+    plot.clearSelection();
+  });
+  // ===================================================================
+  // == END OF NEW CODE BLOCK                                         ==
+  // ===================================================================
 
   // Select datefield radio when clicking in datefield
   $('#dateField').focus(function () {
@@ -840,7 +898,7 @@ $(document).ready(function () {
   // but don't do it on touch screen
   var initstr = 'Touch chart to display readout.';
   if (!is_touch_device) {
-    $('#placeholder').mousedown(function () {
+    $('#placeholder').dblclick(function () {
       $('#settingsModal').modal('toggle');
     });
     initstr = 'Move pointer over graph to display readout.';

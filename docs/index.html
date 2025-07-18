@@ -77,10 +77,6 @@
           }
       }
     </style>
-    <script>
-      // must run before you include jquery.flot.resize.js
-      $.resize.throttleWindow = false;
-    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/headjs/0.99/head.min.js"></script>
     <script>
       head.js(
@@ -90,6 +86,8 @@
           'https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.10.0/additional-methods.min.js',
           'js/lib/jquery.couch.js',
           'js/lib/flot-minify.js',
+          'https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.navigate.min.js',
+          'https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.selection.min.js',
           'js/lib/jquery.flot.crosshair.js',
           'js/lib/jquery.flot.time.min.js',
           'js/lib/jquery.flot.resize.js',
