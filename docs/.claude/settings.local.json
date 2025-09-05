@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//opt/homebrew/var/www/chetstone.github.io/**)",
+      "Read(//opt/homebrew/var/www/chetstone.github.io/**)"
+    ],
+    "deny": [],
+    "ask": [],
+    "additionalDirectories": [
+      "/opt/homebrew/var/www/chetstone.github.io"
+    ]
+  }
+}

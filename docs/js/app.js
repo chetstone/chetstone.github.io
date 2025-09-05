@@ -754,6 +754,54 @@ function plotData(crosshair) {
     // fix the widths so they don't jump around
     $(this).css('width', $(this).width());
   });
+  
+  // Make legend labels clickable to toggle series visibility
+  legends.css('cursor', 'pointer').off('click dblclick').on('click', function(e) {
+    e.stopPropagation(); // Prevent event from bubbling to chart area
+    var seriesIndex = legends.index(this);
+    var currentData = plot.getData();
+    var series = currentData[seriesIndex];
+    
+    if (series) {
+      // Check if currently visible (default is visible if lines.show is not explicitly false)
+      var wasVisible = !series.lines || series.lines.show !== false;
+      if (wasVisible) {
+        // Hide the series - store original config and set to false
+        if (!series._originalLines) {
+          series._originalLines = series.lines ? $.extend(true, {}, series.lines) : null;
+        }
+        if (!series._originalPoints) {
+          series._originalPoints = series.points ? $.extend(true, {}, series.points) : null;
+        }
+        series.lines = series.lines || {};
+        series.lines.show = false;
+        if (series.points) series.points.show = false;
+        $(this).css('opacity', '0.5');
+      } else {
+        // Show the series - restore original configuration
+        if (series._originalLines) {
+          series.lines = $.extend(true, {}, series._originalLines);
+        } else {
+          // If no original config, just enable lines
+          series.lines = series.lines || {};
+          series.lines.show = true;
+        }
+        if (series._originalPoints) {
+          series.points = $.extend(true, {}, series._originalPoints);
+        } else if (series.points) {
+          series.points.show = true;
+        }
+        $(this).css('opacity', '1.0');
+      }
+      
+      // Redraw the plot with updated visibility
+      plot.draw();
+    }
+  }).on('dblclick', function(e) {
+    e.stopPropagation(); // Prevent double-click from opening modal
+    e.preventDefault();
+  });
+  
   latestPosition = null;
   updateLegend(); // initialize legend with values at r. end of chart
 }
