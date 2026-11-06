@@ -9,6 +9,11 @@ When developing, best to work directly on Gesar. I found Chrome works a lot bett
 
 Push the changes to Github, which will update acme.dewachen.org.
 
+### COUCHDB
+
+See [CouchDB setup and upgrades](notes/CouchDB.md) for the persistent
+configuration and normal Homebrew restart commands.
+
 ### NOTES
 
 1. When adding new data series, add it here before adding it to the database.
