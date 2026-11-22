@@ -28,6 +28,7 @@ var notes_query = null;
 var groupLevel = 5;
 var dseries = {};
 var legendViews = {};
+var soloLayout = window.matchMedia('(min-width: 980px)');
 var is_touch_device = 'ontouchstart' in document.documentElement;
 var sieve_interval = 5; // in minutes
 // wine/stereo era 7/26/2014 8PM - 9/4/2014 5PM
@@ -594,7 +595,6 @@ function getDataPlot(period, date, group_level, feed, popState) {
         {
           data: d['GuitarHumidity'],
           label: 'Guitar humidity (%) = 000.0',
-          yaxis: 3,
           points: { show: true, radius: 2 },
           lines: { show: true },
           curvedLines: { apply: false },
@@ -736,6 +736,7 @@ function legendControls(label, view) {
     'aria-pressed': String(seriesVisible(view, label)),
     title: 'Show or hide ' + name,
   }).text(label);
+  if (!soloLayout.matches) return toggle[0].outerHTML;
   var isolate = $('<button type="button" class="series-solo">').attr({
     'aria-label': 'Solo ' + name,
     'aria-pressed': String(solo),
@@ -767,23 +768,21 @@ function plotData(crosshair) {
       { mode: 'time', timezone: 'browser' },
       { mode: 'time', timezone: 'browser' },
     ],
-    yaxes: [
-      {},
-      { reserveSpace: true, show: false },
-      {
-        position: 'right',
-        min: 0,
-        max: 100,
-        show: format === 'temps',
-        tickFormatter: function (value) { return value + '%'; },
-      },
-    ],
+    yaxes: [{}, { position: 'right', show: true, tickLength: 5 }],
+    hooks: {
+      processOffset: [function (chart) {
+        // Give both axes the same data range before Flot calculates their ticks.
+        var axes = chart.getYAxes();
+        axes[1].datamin = axes[0].datamin;
+        axes[1].datamax = axes[0].datamax;
+      }],
+    },
     crosshair: { mode: 'x' },
     grid: {
       hoverable: true,
       autoHighlight: false,
       borderWidth: 1,
-      margin: { left: window.innerWidth < 900 ? -30 : 0, bottom: 10 },
+      margin: { bottom: 10 },
     },
     selection: {
       mode: 'x', // Allow selection along the x-axis (time)
@@ -872,6 +871,14 @@ $(document).ready(function () {
   // preselect "Now" in settings dialog until a time is picked
   $('input:radio[name=dateRadios]')[0].checked = true;
 
+  soloLayout.addListener(function () {
+    if (!soloLayout.matches) {
+      Object.keys(legendViews).forEach(function (tab) {
+        legendViews[tab].solo = null;
+      });
+    }
+    if (plot) plotData(false);
+  });
   $('#placeholder').on('click', '.legendLabel button', function () {
     var cells = $('#placeholder .legendLabel');
     var index = cells.index($(this).closest('.legendLabel'));
@@ -880,6 +887,7 @@ $(document).ready(function () {
     var view = legendViews[format];
     var soloButton = $(this).hasClass('series-solo');
     if (soloButton) {
+      if (!soloLayout.matches) return;
       view.solo = view.solo === label ? null : label;
     } else {
       if (view.solo) {

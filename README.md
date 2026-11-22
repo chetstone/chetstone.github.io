@@ -25,8 +25,9 @@ the Temp attribute of 2023-01-11T01:58:00Z.Garage
 is called GarageTemp here (js/app.js)
 
 3. The existing `byDate` view includes `GuitarHumidity` from Hubitat Office
-Temperature Sensor 623. The Weather tab plots it as Guitar humidity (%) on a
-separate 0–100% right axis. Both historical queries and live updates support it.
+Temperature Sensor 623. The Weather tab plots Guitar humidity (%) on the same
+dynamic scale as the temperatures. Each chart repeats its scale on the right.
+Both historical queries and live updates support humidity.
 The view definition and installer are in the sibling ssdata repository under
 `tools/guitar_humidity/`. Updating the view can temporarily break older clients
 until the updated frontend is published and reloaded.
