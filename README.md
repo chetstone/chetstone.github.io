@@ -24,8 +24,12 @@ e.g.
 the Temp attribute of 2023-01-11T01:58:00Z.Garage
 is called GarageTemp here (js/app.js)
 
-3. The byDate MapReduce function suppresses Humidity-- only returns Probe and Temp values.
-(So why are we storing humidity in the db???)
+3. The existing `byDate` view includes `GuitarHumidity` from Hubitat Office
+Temperature Sensor 623. The Weather tab plots it as Guitar humidity (%) on a
+separate 0–100% right axis. Both historical queries and live updates support it.
+The view definition and installer are in the sibling ssdata repository under
+`tools/guitar_humidity/`. Updating the view can temporarily break older clients
+until the updated frontend is published and reloaded.
 
 ### URL PARAMS:
 

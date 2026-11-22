@@ -363,6 +363,7 @@ function getDataPlot(period, date, group_level, feed, popState) {
       d['GarageTemp'] = [];
       d['StorageTemp'] = [];
       d['ShrineTemp'] = [];
+      d['GuitarHumidity'] = [];
       d['OutTemp'] = [];
       d['InTemp'] = [];
       d['BackTemp'] = [];
@@ -469,7 +470,7 @@ function getDataPlot(period, date, group_level, feed, popState) {
 
           val = translateProp(dat, val);
 
-          if (val) {
+          if (val && d[val]) {
             d[val].push([dat, avg]);
           }
         }
@@ -591,6 +592,14 @@ function getDataPlot(period, date, group_level, feed, popState) {
           label: 'Back Patio = 000.0',
           curvedLines: { apply: true },
         },
+        {
+          data: d['GuitarHumidity'],
+          label: 'Guitar humidity (%) = 000.0',
+          yaxis: 3,
+          points: { show: true, radius: 2 },
+          lines: { show: true },
+          curvedLines: { apply: false },
+        },
         //                              {data: d["InHumidity"], label:'Inside Hum = 000'},
         //                              {data: d["STOutHumidity"], label:'Outside Hum= 000'}
         { data: d['InProbe'], label: 'Slab = 000' },
@@ -598,7 +607,7 @@ function getDataPlot(period, date, group_level, feed, popState) {
 
       for (var i = 0; i < alltemps.length; i++) {
         //console.log( "label: " + alltemps[i].label + " length: " + alltemps[i].data.length);
-        if (alltemps[i].data.length) {
+        if (alltemps[i].data.length || alltemps[i].data === d['GuitarHumidity']) {
           dseries['temps'].push(alltemps[i]);
         }
       }
@@ -732,7 +741,17 @@ function plotData(crosshair) {
       { mode: 'time', timezone: 'browser' },
       { mode: 'time', timezone: 'browser' },
     ],
-    yaxes: [{}, { reserveSpace: true, show: false }],
+    yaxes: [
+      {},
+      { reserveSpace: true, show: false },
+      {
+        position: 'right',
+        min: 0,
+        max: 100,
+        show: format === 'temps',
+        tickFormatter: function (value) { return value + '%'; },
+      },
+    ],
     crosshair: { mode: 'x' },
     grid: {
       hoverable: true,
@@ -974,7 +993,8 @@ $(document).ready(function () {
           if (unit != 'DL2') {
             if (unit == 'Notes') return;
             for (var k in doc) {
-              if (k != 'Probe' && k != 'Temp' && unit != 'ST') continue;
+              if (k != 'Probe' && k != 'Temp' && unit != 'ST' &&
+                  !(unit === 'Guitar' && k === 'Humidity')) continue;
               if (k.charAt(0) == '_') continue;
               valhash[unit + k] = Number(doc[k]);
             }
@@ -989,8 +1009,12 @@ $(document).ready(function () {
         for (var val in valhash) {
           var newval = translateProp(dat, val);
           //          //console.log(' Prop ' + newval + ': ' + valhash[val]);
-          if (newval) {
-            d[newval].shift();
+          if (newval && d[newval]) {
+            if (newval !== 'GuitarHumidity') d[newval].shift();
+            while (newval === 'GuitarHumidity' && d[newval].length &&
+                   d[newval][0][0] < dat.getTime() - period * 1000) {
+              d[newval].shift();
+            }
             d[newval].push([dat, valhash[val]]);
           }
         }
