@@ -21,6 +21,27 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap-responsive.min.css"
       />
     <style>
+      .legendLabel button {
+          border: 0;
+          background: transparent;
+          padding: 0;
+          color: inherit;
+          font: inherit;
+          cursor: pointer;
+      }
+      .legendLabel .series-solo {
+          margin-left: 0.5em;
+          padding: 0 0.35em;
+          border: 1px solid #aaa;
+          border-radius: 3px;
+      }
+      .series-toggle[aria-pressed="false"] {
+          opacity: 0.55;
+      }
+      .legendLabel .series-solo[aria-pressed="true"] {
+          color: white;
+          background: #555;
+      }
       label.valid {
           width: 24px;
           height: 24px;

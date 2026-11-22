@@ -27,6 +27,7 @@ var data_query = null;
 var notes_query = null;
 var groupLevel = 5;
 var dseries = {};
+var legendViews = {};
 var is_touch_device = 'ontouchstart' in document.documentElement;
 var sieve_interval = 5; // in minutes
 // wine/stereo era 7/26/2014 8PM - 9/4/2014 5PM
@@ -221,6 +222,7 @@ function updateLegend() {
   var i,
     j,
     dataset = plot.getData();
+  var labels = $('#placeholder .series-toggle');
   var best_date = 0;
   var best_length = 0;
   for (i = 0; i < dataset.length; ++i) {
@@ -247,13 +249,11 @@ function updateLegend() {
       x = p1[0];
     }
 
-    var legends = $('#placeholder .legendLabel');
-
     if (series.label == 'Valve=xxxxxx') {
-      legends.eq(i).text(series.label.replace(/=.*/, '= ' + y));
+      labels.eq(i).text(series.label.replace(/=.*/, '= ' + y));
     } else {
       var dpoint = /pump/.test(series.label) ? 0 : 1;
-      legends.eq(i).text(series.label.replace(/=.*/, '= ' + y.toFixed(dpoint)));
+      labels.eq(i).text(series.label.replace(/=.*/, '= ' + y.toFixed(dpoint)));
     }
 
     var ddate = new Date(Date.parse(x));
@@ -349,7 +349,6 @@ function getDataPlot(period, date, group_level, feed, popState) {
   notes_query = new $.Deferred();
   notes_query.resolve([{ rows: [] }]);
 
-  var legends;
   $.when(data_query, notes_query).done(
     function (jstuff, notes) {
       dseries['solar'] = [];
@@ -725,10 +724,37 @@ function getDataPlot(period, date, group_level, feed, popState) {
   );
 }
 
+function seriesVisible(view, label) {
+  return view.solo ? view.solo === label : !view.hidden[label];
+}
+
+function legendControls(label, view) {
+  var name = label.split('=')[0].trim();
+  var solo = view.solo === label;
+  var toggle = $('<button type="button" class="series-toggle">').attr({
+    'aria-label': name,
+    'aria-pressed': String(seriesVisible(view, label)),
+    title: 'Show or hide ' + name,
+  }).text(label);
+  var isolate = $('<button type="button" class="series-solo">').attr({
+    'aria-label': 'Solo ' + name,
+    'aria-pressed': String(solo),
+    title: solo ? 'Restore previous series' : 'Show only ' + name,
+  }).text('Solo');
+  return $('<div>').append(toggle, isolate).html();
+}
+
 function plotData(crosshair) {
-  // clear the legend table before redrawing
-  //  $('#placeholder table').remove();
-  plot = $.plot($('#placeholder'), dseries[format], {
+  var series = dseries[format];
+  var view = legendViews[format] || (legendViews[format] = { hidden: {}, solo: null });
+  if (view.solo && !series.some(function (item) { return item.label === view.solo; })) {
+    view.solo = null;
+  }
+  var visibleData = series.map(function (item) {
+    if (seriesVisible(view, item.label)) return item;
+    return $.extend({}, item, { lines: { show: false }, points: { show: false } });
+  });
+  plot = $.plot($('#placeholder'), visibleData, {
     series: {
       shadowSize: 0,
       curvedLines: {
@@ -763,64 +789,18 @@ function plotData(crosshair) {
       mode: 'x', // Allow selection along the x-axis (time)
       color: 'rgba(128, 128, 255, 0.4)', // A nice semi-transparent blue for the selection area
     },
-    legend: { position: 'nw', show: true },
+    legend: {
+      position: 'nw',
+      labelFormatter: function (label) { return legendControls(label, view); },
+    },
   });
   if (crosshair) {
     plot.setCrosshair({ x: crosshair });
   }
-  legends = $('#placeholder .legendLabel');
-  legends.each(function () {
-    // fix the widths so they don't jump around
+  $('#placeholder .legendLabel').each(function () {
+    // Fix the widths so hover values don't make the legend jump around.
     $(this).css('width', $(this).width());
   });
-  
-  // Make legend labels clickable to toggle series visibility
-  legends.css('cursor', 'pointer').off('click dblclick').on('click', function(e) {
-    e.stopPropagation(); // Prevent event from bubbling to chart area
-    var seriesIndex = legends.index(this);
-    var currentData = plot.getData();
-    var series = currentData[seriesIndex];
-    
-    if (series) {
-      // Check if currently visible (default is visible if lines.show is not explicitly false)
-      var wasVisible = !series.lines || series.lines.show !== false;
-      if (wasVisible) {
-        // Hide the series - store original config and set to false
-        if (!series._originalLines) {
-          series._originalLines = series.lines ? $.extend(true, {}, series.lines) : null;
-        }
-        if (!series._originalPoints) {
-          series._originalPoints = series.points ? $.extend(true, {}, series.points) : null;
-        }
-        series.lines = series.lines || {};
-        series.lines.show = false;
-        if (series.points) series.points.show = false;
-        $(this).css('opacity', '0.5');
-      } else {
-        // Show the series - restore original configuration
-        if (series._originalLines) {
-          series.lines = $.extend(true, {}, series._originalLines);
-        } else {
-          // If no original config, just enable lines
-          series.lines = series.lines || {};
-          series.lines.show = true;
-        }
-        if (series._originalPoints) {
-          series.points = $.extend(true, {}, series._originalPoints);
-        } else if (series.points) {
-          series.points.show = true;
-        }
-        $(this).css('opacity', '1.0');
-      }
-      
-      // Redraw the plot with updated visibility
-      plot.draw();
-    }
-  }).on('dblclick', function(e) {
-    e.stopPropagation(); // Prevent double-click from opening modal
-    e.preventDefault();
-  });
-  
   latestPosition = null;
   updateLegend(); // initialize legend with values at r. end of chart
 }
@@ -892,6 +872,29 @@ $(document).ready(function () {
   // preselect "Now" in settings dialog until a time is picked
   $('input:radio[name=dateRadios]')[0].checked = true;
 
+  $('#placeholder').on('click', '.legendLabel button', function () {
+    var cells = $('#placeholder .legendLabel');
+    var index = cells.index($(this).closest('.legendLabel'));
+    var series = dseries[format];
+    var label = series[index].label;
+    var view = legendViews[format];
+    var soloButton = $(this).hasClass('series-solo');
+    if (soloButton) {
+      view.solo = view.solo === label ? null : label;
+    } else {
+      if (view.solo) {
+        // Start manual edits from the combination currently on screen.
+        series.forEach(function (item) {
+          view.hidden[item.label] = item.label !== view.solo;
+        });
+        view.solo = null;
+      }
+      view.hidden[label] = !view.hidden[label];
+    }
+    plotData(false);
+    $('#placeholder .legendLabel').eq(index)
+      .find(soloButton ? '.series-solo' : '.series-toggle').focus();
+  });
   $('#placeholder').bind('plothover', function (event, pos, item) {
     latestPosition = pos;
     if (!updateLegendTimeout)
@@ -965,8 +968,8 @@ $(document).ready(function () {
   // but don't do it on touch screen
   var initstr = 'Touch chart to display readout.';
   if (!is_touch_device) {
-    $('#placeholder').dblclick(function () {
-      $('#settingsModal').modal('toggle');
+    $('#placeholder').dblclick(function (event) {
+      if (!$(event.target).closest('.legend').length) $('#settingsModal').modal('toggle');
     });
     initstr = 'Move pointer over graph to display readout.';
   }
